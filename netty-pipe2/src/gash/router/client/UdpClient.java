@@ -1,5 +1,7 @@
 package gash.router.client;
 
+import gash.router.app.MyConstants;
+import gash.router.server.state.State;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,7 +14,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.SocketUtils;
 import routing.MsgInterface.NetworkDiscoveryPacket;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.Route.Path;
 
 public final class UdpClient {
 
@@ -21,8 +26,15 @@ public final class UdpClient {
     public static void main(String[] args) throws Exception {
 
         Route.Builder routebuilder=Route.newBuilder();
-        		
-
+        routebuilder.setId(999);
+        routebuilder.setPath(Path.NETWORK_DISCOVERY);
+        NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
+        ndpReq.setMode(Mode.REQUEST);
+        ndpReq.setSender(Sender.END_USER_CLIENT);
+        ndpReq.setNodeAddress(State.myConfig.getHost());
+        ndpReq.setNodePort(State.myConfig.getWorkPort());
+        ndpReq.setSecret("secret");
+        routebuilder.setNetworkDiscoveryPacket(ndpReq.build());
         Route msg=routebuilder.build();
         EventLoopGroup group = new NioEventLoopGroup();
         try {

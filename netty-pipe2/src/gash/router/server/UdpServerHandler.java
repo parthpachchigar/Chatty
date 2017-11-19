@@ -1,6 +1,6 @@
 package gash.router.server;
 
-package server;
+
 
 
 import io.netty.buffer.ByteBuf;
