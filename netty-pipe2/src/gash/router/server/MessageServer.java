@@ -92,11 +92,11 @@ public class MessageServer {
 		if (!cfg.exists())
 			throw new RuntimeException(cfg.getAbsolutePath() + " not found");
 		// resource initialization - how message are processed
-		File routconf=new File("resources/routing.conf");
+		File routeconf=new File("resources/routing.conf");
 		BufferedInputStream br = null;
 		try {
-			byte[] raw = new byte[(int) cfg.length()];
-			br = new BufferedInputStream(new FileInputStream(cfg));
+			byte[] raw = new byte[(int) routeconf.length()];
+			br = new BufferedInputStream(new FileInputStream(routeconf));
 			br.read(raw);
 			conf = JsonUtil.decode(new String(raw), MessageRoutingConf.class);
 			if (!verifyConf(conf))
@@ -120,7 +120,7 @@ public class MessageServer {
 			br = new BufferedInputStream(new FileInputStream(cfg));
 			br.read(raw);
 			State.myConfig = JsonUtil.decode(new String(raw), RoutingConf.class);
-			if (conf2==null)
+			if (State.myConfig==null)
 				throw new RuntimeException("verification of configuration failed");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -133,6 +133,7 @@ public class MessageServer {
 				}
 			}
 		}
+		logger.info("Node id is "+State.myConfig.getNodeId());
 	}
 
 	private boolean verifyConf(MessageRoutingConf conf) {

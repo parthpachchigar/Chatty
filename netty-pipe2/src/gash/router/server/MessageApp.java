@@ -35,7 +35,7 @@ public class MessageApp {
 		
 		
 		
-		/*if (args.length == 0) {
+		if (args.length == 0) {
 			System.out.println("usage: server <config file>");
 			System.exit(1);
 		}
@@ -48,6 +48,6 @@ public class MessageApp {
 			e.printStackTrace();
 		} finally {
 			System.out.println("server closing");
-		}*/
+		}
 	}
 }
