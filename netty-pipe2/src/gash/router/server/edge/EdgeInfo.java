@@ -12,7 +12,6 @@ public class EdgeInfo {
 	private boolean active = false;
 	private Channel channel;
 	public static ArrayList<Integer> availableNodes = new ArrayList<Integer>();
-
 	EdgeInfo(int ref, String host, long port2) {
 		this.ref = ref;
 		this.host = host;

@@ -1,6 +1,7 @@
 package gash.router.server.state;
 
 import gash.router.container.RoutingConf;
+import gash.router.server.edge.EdgeList;
 
 public class State {
 	public enum Status{
@@ -10,6 +11,7 @@ public class State {
 	};
 	private static Status currentState;
 	public static RoutingConf myConfig;
+	
 	public static Status getStatus() {
 		return currentState;
 	}

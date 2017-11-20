@@ -48,7 +48,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<Route> {
             toSend.setId(999);
             toSend.setPath(Path.NETWORK_DISCOVERY);
             NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
-            ndpReq.setMode(Mode.REQUEST);
+            ndpReq.setMode(Mode.RESPONSE);
             if(request.getNetworkDiscoveryPacket().getSender()!=Sender.valueOf(Sender.EXTERNAL_SERVER_NODE_VALUE)) {
             	ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
             }else {
@@ -56,6 +56,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<Route> {
             }
             ndpReq.setNodeAddress(State.myConfig.getHost());
             ndpReq.setNodePort(State.myConfig.getWorkPort());
+            ndpReq.setNodeId(""+State.myConfig.getNodeId());
             ndpReq.setSecret("secret");
             toSend.setNetworkDiscoveryPacket(ndpReq.build());
             Route myResponse = toSend.build();

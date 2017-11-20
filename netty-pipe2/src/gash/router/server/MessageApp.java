@@ -29,8 +29,6 @@ public class MessageApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Thread discoveryThread = new Thread(new UdpServer());
-		discoveryThread.start();
 		State.setStatus(State.Status.FOLLOWER);
 		
 		

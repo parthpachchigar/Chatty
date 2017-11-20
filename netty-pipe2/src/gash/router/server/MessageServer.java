@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -66,6 +68,7 @@ public class MessageServer {
 			comm.run();
 		
 		EdgeMonitor mon=EdgeMonitor.getInstance();
+		
 		
 		
 	}
@@ -134,6 +137,13 @@ public class MessageServer {
 			}
 		}
 		logger.info("Node id is "+State.myConfig.getNodeId());
+		
+		Thread discoveryThread = new Thread(new UdpServer());
+		discoveryThread.start();
+		
+		Timer timer=new Timer();
+		timer.schedule(new DiscoverTask(), 0, 5 * 1000);
+		timer.schedule(new DisplayEdgeTask(),0, 4*1000);
 	}
 
 	private boolean verifyConf(MessageRoutingConf conf) {
@@ -161,7 +171,7 @@ public class MessageServer {
 
 			try {
 				ServerBootstrap b = new ServerBootstrap();
-				bootstrap.put(conf.getPort(), b);
+				bootstrap.put(State.myConfig.getWorkPort(), b);
 
 				b.group(bossGroup, workerGroup);
 				b.channel(NioServerSocketChannel.class);
@@ -174,8 +184,8 @@ public class MessageServer {
 				b.childHandler(new ServerInit(conf, compressComm));
 
 				// Start the server.
-				logger.info("Starting server, listening on port = " + conf.getPort());
-				ChannelFuture f = b.bind(conf.getPort()).syncUninterruptibly();
+				logger.info("Starting server, listening on port = " + State.myConfig.getWorkPort());
+				ChannelFuture f = b.bind(State.myConfig.getWorkPort()).syncUninterruptibly();
 
 				logger.info(f.channel().localAddress() + " -> open: " + f.channel().isOpen() + ", write: "
 						+ f.channel().isWritable() + ", act: " + f.channel().isActive());
@@ -234,3 +244,24 @@ public class MessageServer {
 	}
 
 }
+
+
+class DiscoverTask extends TimerTask {
+	public DiscoverTask() {
+		
+	}
+	@Override
+	public void run() {
+		EdgeMonitor.discoverEdges();
+
+	}
+}
+
+class DisplayEdgeTask extends TimerTask {
+
+	@Override
+	public void run() {
+		EdgeMonitor.displayEdgeStatus();
+	}
+}
+

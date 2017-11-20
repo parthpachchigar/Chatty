@@ -1,11 +1,10 @@
 package gash.router.server.edge;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import gash.router.client.CommInit;
+import gash.router.server.state.State;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,13 +18,11 @@ import io.netty.util.CharsetUtil;
 import routing.MsgInterface.Route;
 
 public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
-	protected static Logger logger = LoggerFactory.getLogger("client");
+	protected static Logger logger = LoggerFactory.getLogger("server");
 	static EventLoopGroup group = new NioEventLoopGroup();
-	private static EdgeList outbound = new EdgeList();
-	
-	
-	public static void init(EdgeInfo ei)
-	{
+	static EdgeList outbound=new EdgeList();
+
+	public static void init(EdgeInfo ei) {
 		logger.info("Trying to connect to host ! " + ei.getHost());
 		try {
 			CommInit si = new CommInit(false);
@@ -35,11 +32,9 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 			b.option(ChannelOption.TCP_NODELAY, true);
 			b.option(ChannelOption.SO_KEEPALIVE, true);
 
-
 			// Make the connection attempt.
 			ChannelFuture cf = b.connect(ei.getHost(), (int) ei.getPort()).syncUninterruptibly();
 
-			
 			// want to monitor the connection to the server s.t. if we loose the
 			// connection, we can try to re-establish it.
 			// ClientClosedListener ccl = new ClientClosedListener(this);
@@ -47,8 +42,8 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 			ei.setChannel(cf.channel());
 			ei.setActive(true);
 
-			System.out.println(cf.channel().localAddress() + " -> open: " + cf.channel().isOpen()
-					+ ", write: " + cf.channel().isWritable() + ", reg: " + cf.channel().isRegistered());
+			System.out.println(cf.channel().localAddress() + " -> open: " + cf.channel().isOpen() + ", write: "
+					+ cf.channel().isWritable() + ", reg: " + cf.channel().isRegistered());
 
 		} catch (Throwable ex) {
 			System.out.println("failed to initialize the client connection " + ex.toString());
@@ -57,22 +52,31 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 
 	}
 
-    @Override
-    public void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
-    	String host = msg.getNetworkDiscoveryPacket().getNodeAddress();
+	@Override
+	public void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
+		logger.info("Message Arrived");
+		
+		String host = "127.0.0.1";//msg.getNetworkDiscoveryPacket().getNodeAddress();
 		long port = msg.getNetworkDiscoveryPacket().getNodePort();
-		String nodeId = msg.getNetworkDiscoveryPacket().getNodeId();
-		 // Create Connection to host and port and write task to the channel
-		if(!outbound.getMap().containsKey(nodeId)){
-			init(outbound.addNode(Integer.parseInt(nodeId), host, port));
-			EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
+		if (msg.getNetworkDiscoveryPacket().hasNodeId()) {
+			
+		String nodeId=msg.getNetworkDiscoveryPacket().getNodeId();
+		logger.info("In outbound: "+outbound.getMap().containsKey(Integer.parseInt(nodeId)));
+			if (!outbound.getMap().containsKey(Integer.parseInt(nodeId))) {
+				logger.info("Before init");
+				//outbound.addNode(Integer.parseInt(nodeId), host, port);
+				init(outbound.addNode(Integer.parseInt(nodeId), host, port));
+				EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
+			}
+			// Create Connection to host and port and write task to the channel
+			
 		}
-        ctx.flush();
-    }
+		ctx.flush();
+	}
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        ctx.close();
-    }
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+		cause.printStackTrace();
+		ctx.close();
+	}
 }
