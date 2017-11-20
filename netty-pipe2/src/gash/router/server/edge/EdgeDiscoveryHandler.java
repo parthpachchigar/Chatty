@@ -20,7 +20,7 @@ import routing.MsgInterface.Route;
 public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("server");
 	static EventLoopGroup group = new NioEventLoopGroup();
-	static EdgeList outbound=new EdgeList();
+	public static EdgeList outbound=new EdgeList();
 
 	public static void init(EdgeInfo ei) {
 		logger.info("Trying to connect to host ! " + ei.getHost());
@@ -66,7 +66,9 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 				logger.info("Before init");
 				//outbound.addNode(Integer.parseInt(nodeId), host, port);
 				init(outbound.addNode(Integer.parseInt(nodeId), host, port));
-				EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
+				if(State.myConfig.getRouting().contains(new gash.router.container.RoutingConf.RoutingEntry(Integer.parseInt(nodeId), host, (int)port) )) {
+					EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
+				}
 			}
 			// Create Connection to host and port and write task to the channel
 			

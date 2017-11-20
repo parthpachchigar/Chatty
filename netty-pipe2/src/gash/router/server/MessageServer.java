@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import gash.router.container.MessageRoutingConf;
 import gash.router.container.RoutingConf;
 import gash.router.server.edge.EdgeMonitor;
+import gash.router.server.state.FollowerState;
 import gash.router.server.state.State;
+import gash.router.server.state.StateMachine;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -140,10 +142,10 @@ public class MessageServer {
 		
 		Thread discoveryThread = new Thread(new UdpServer());
 		discoveryThread.start();
+		State.setStatus(State.Status.FOLLOWER);
+		//StateMachine.running=false;
+		//new Thread(new StateMachine()).start();
 		
-		Timer timer=new Timer();
-		timer.schedule(new DiscoverTask(), 0, 5 * 1000);
-		timer.schedule(new DisplayEdgeTask(),0, 4*1000);
 	}
 
 	private boolean verifyConf(MessageRoutingConf conf) {

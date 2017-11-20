@@ -18,6 +18,10 @@ package gash.router.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.server.state.CandidateState;
+import gash.router.server.state.State;
+import routing.MsgInterface.Route;
+
 /**
  * responds to request for pinging the service
  * 
@@ -33,9 +37,15 @@ public class PingResource implements RouteResource {
 	}
 
 	@Override
-	public String process(String body) {
-		logger.info(body);
-		return "success";
+	public Route process(Route body) {
+		Route reply=null;
+		logger.info(body.toString());
+		if (State.getStatus() == State.Status.CANDIDATE) {
+			CandidateState.getInstance().handleVote();
+		}else {
+			reply=body;
+		}
+		return reply;
 	}
 
 }

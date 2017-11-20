@@ -13,8 +13,8 @@ message Route {
         MESSAGES_REQUEST = 5;
         MESSAGES_RESPONSE = 6;
         HEADER = 7;
-	RESPONSE = 8;
-	REPLICATE=9;
+		RESPONSE = 8;
+		REPLICATE=9;
     }
 
     //a node should not have a value though this is not enforced
@@ -124,7 +124,7 @@ message NetworkDiscoveryPacket {
     enum Mode {
         REQUEST = 0;
         RESPONSE = 1;
-	REMOVE_NODE = 2; // Use this mode to ask other cluster to remove one of your nodes which is not up now. Or which is not the leader now. Teams must remove the node (details in packet) from their UDP discovery data structure.
+		REMOVE_NODE = 2; // Use this mode to ask other cluster to remove one of your nodes which is not up now. Or which is not the leader now. Teams must remove the node (details in packet) from their UDP discovery data structure.
     }
 
     required Mode mode = 1;
