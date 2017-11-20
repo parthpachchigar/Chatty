@@ -22,6 +22,7 @@ public interface DatabaseClient {
 	List<Record> getAllEntries();
 
 	void post(String key, byte[] image, long timestamp);
+	public List getMessages(String fromId, String destId);
 
 	ResultSetMetaData getMessage(String key);
 	void postMessage(String message, String toId,String fromId);

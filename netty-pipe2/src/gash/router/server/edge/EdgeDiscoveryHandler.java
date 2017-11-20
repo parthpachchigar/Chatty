@@ -56,7 +56,7 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 	public void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
 		logger.info("Message Arrived");
 		
-		String host = "127.0.0.1";//msg.getNetworkDiscoveryPacket().getNodeAddress();
+		String host = msg.getNetworkDiscoveryPacket().getNodeAddress();//"127.0.0.1";//msg.getNetworkDiscoveryPacket().getNodeAddress();
 		long port = msg.getNetworkDiscoveryPacket().getNodePort();
 		if (msg.getNetworkDiscoveryPacket().hasNodeId()) {
 			

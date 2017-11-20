@@ -90,8 +90,8 @@ public class EdgeMonitor {
 
             ByteBuf buf = Unpooled.copiedBuffer(msg.toByteArray());
             
-
-            ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress("127.0.0.1", PORT))).sync();
+            //127.0.0.1
+            ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress(State.myConfig.getHost(), PORT))).sync();
 
             // UDPClientHandler will close the DatagramChannel when a
             // response is received.  If the channel is not closed within 5 seconds,
