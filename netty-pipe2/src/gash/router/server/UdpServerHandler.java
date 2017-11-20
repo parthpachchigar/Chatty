@@ -1,8 +1,5 @@
 package gash.router.server;
 
-
-
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
