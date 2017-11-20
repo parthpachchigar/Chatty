@@ -67,6 +67,18 @@ public class MessageClient {
 			e.printStackTrace();
 		}
 	}
+	public void sendMessage(Route msg) {
+
+		try {
+			// direct no queue
+			// CommConnection.getInstance().write(rb.build());
+
+			// using queue
+			CommConnection.getInstance().enqueue(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void release() {
 		CommConnection.getInstance().release();
