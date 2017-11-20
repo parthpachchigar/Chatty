@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package client;
+package gash.router.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import client.CommListener;
-import client.MessageClient;
+import gash.router.client.CommListener;
+import gash.router.client.MessageClient;
 import routing.MsgInterface.Message;
 import routing.MsgInterface.Route;
 

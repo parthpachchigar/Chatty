@@ -73,10 +73,5 @@ public final class UdpClient {
         } finally {
             group.shutdownGracefully();
         }
-        public static void main(String []args) throws Exception{
-            Thread responseThread = new Thread(new UdpClient());
-            responseThread.start();
-            UdpClient.broadcast();
-        }
     }
 }

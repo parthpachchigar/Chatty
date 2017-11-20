@@ -10,6 +10,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket;
 
 public class UdpClientHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("client");
