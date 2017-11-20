@@ -88,7 +88,7 @@ public class DemoApp implements CommListener {
 			DemoApp da = new DemoApp(mc);
 
 			// do stuff w/ the connection
-			da.ping(4000);
+			da.ping(5);
 
 			System.out.println("\n** exiting in 10 seconds. **");
 			System.out.flush();

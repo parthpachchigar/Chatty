@@ -12,37 +12,58 @@ import java.net.Inet4Address;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import gash.router.server.state.State;
 import io.netty.util.internal.SocketUtils;
 import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
+import routing.MsgInterface.Route.Path;
 
 
 public class UdpServerHandler extends SimpleChannelInboundHandler<Route> {
 
     private static final Random random = new Random();
-
+    protected static Logger logger = LoggerFactory.getLogger("server");
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Route request) throws Exception {
-        System.err.println("In channel read");
+    	
+        //System.err.println("In channel read");
 
-        System.err.println(request.getGroup());
-        System.err.println(request.getId());
+        //System.err.println(request.getGroup());
+        //System.err.println(request.getId());
 
 //
-        System.err.println(ctx.channel().attr(UdpServer.attkey).get());
+        //System.err.println(ctx.channel().attr(UdpServer.attkey).get());
         String clientIpPort = ctx.channel().attr(UdpServer.attkey).get();
         String clientIp = clientIpPort.split(":")[0];
         String clientPort = clientIpPort.split(":")[1];
 
         try {
             Route.Builder toSend = Route.newBuilder();
-            
+            toSend.setId(999);
+            toSend.setPath(Path.NETWORK_DISCOVERY);
+            NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
+            ndpReq.setMode(Mode.REQUEST);
+            if(request.getNetworkDiscoveryPacket().getSender()!=Sender.valueOf(Sender.EXTERNAL_SERVER_NODE_VALUE)) {
+            	ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
+            }else {
+            	ndpReq.setSender(Sender.EXTERNAL_SERVER_NODE);
+            }
+            ndpReq.setNodeAddress(State.myConfig.getHost());
+            ndpReq.setNodePort(State.myConfig.getWorkPort());
+            ndpReq.setSecret("secret");
+            toSend.setNetworkDiscoveryPacket(ndpReq.build());
             Route myResponse = toSend.build();
             ByteBuf buf = Unpooled.copiedBuffer(myResponse.toByteArray());
             ctx.writeAndFlush(new DatagramPacket(buf, SocketUtils.socketAddress(clientIp.substring(1, clientIp.length()), Integer.parseInt(clientPort)))).sync();
+            logger.info("Discovery Packet Sent");
         } catch (Exception e) {
-            System.err.println("Exception received");
+            logger.error("Exception received");
             e.printStackTrace();
         }
     }

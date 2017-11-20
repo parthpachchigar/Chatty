@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import gash.router.client.UdpClientHandler;
 import gash.router.container.RoutingConf;
+import gash.router.container.RoutingConf.RoutingEntry;
 import gash.router.server.state.State;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -44,7 +45,7 @@ public class EdgeMonitor {
 	}
 
 	public static void discoverEdges() {
-
+		EdgeInfo.availableNodes.clear();
 		Route.Builder routebuilder = Route.newBuilder();
 
 		Route msg = routebuilder.build();
@@ -71,7 +72,7 @@ public class EdgeMonitor {
 			ByteBuf buf = Unpooled.copiedBuffer(msg.toByteArray());
 
 			try {
-				ch.writeAndFlush(new DatagramPacket(buf, SocketUtils.socketAddress("127.0.0.1", PORT))).sync();
+				ch.writeAndFlush(new DatagramPacket(buf, SocketUtils.socketAddress(State.myConfig.getHost(), PORT))).sync();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,8 +109,8 @@ public class EdgeMonitor {
 		// gash.router.server.edge.EdgeInfo.availableNodes
 		// and if present print that node as active otherwise inactive
 
-		for (Integer i : EdgeInfo.availableNodes) {
-			if (State.myConfig.getNodeId() == i) {
+		for (RoutingEntry i : State.myConfig.getRouting()) {
+			if (EdgeInfo.availableNodes.contains(i.getId())) {
 				System.out.println("Node active:" + i);
 			} else {
 				System.out.println("Node inactive:" + i);

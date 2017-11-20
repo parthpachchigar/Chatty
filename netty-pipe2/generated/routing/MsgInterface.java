@@ -117,30 +117,30 @@ public final class MsgInterface {
     routing.MsgInterface.MessagesResponseOrBuilder getMessagesResponseOrBuilder();
 
     /**
-     * <code>optional .Header header = 9;</code>
-     */
-    boolean hasHeader();
-    /**
-     * <code>optional .Header header = 9;</code>
-     */
-    routing.MsgInterface.Header getHeader();
-    /**
-     * <code>optional .Header header = 9;</code>
-     */
-    routing.MsgInterface.HeaderOrBuilder getHeaderOrBuilder();
-
-    /**
-     * <code>optional .Response response = 10;</code>
+     * <code>optional .Response response = 9;</code>
      */
     boolean hasResponse();
     /**
-     * <code>optional .Response response = 10;</code>
+     * <code>optional .Response response = 9;</code>
      */
     routing.MsgInterface.Response getResponse();
     /**
-     * <code>optional .Response response = 10;</code>
+     * <code>optional .Response response = 9;</code>
      */
     routing.MsgInterface.ResponseOrBuilder getResponseOrBuilder();
+
+    /**
+     * <code>optional .Header header = 10;</code>
+     */
+    boolean hasHeader();
+    /**
+     * <code>optional .Header header = 10;</code>
+     */
+    routing.MsgInterface.Header getHeader();
+    /**
+     * <code>optional .Header header = 10;</code>
+     */
+    routing.MsgInterface.HeaderOrBuilder getHeaderOrBuilder();
   }
   /**
    * Protobuf type {@code Route}
@@ -251,65 +251,65 @@ public final class MsgInterface {
             }
             case 50: {
               routing.MsgInterface.Group.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000020) == 0x00000020)) {
-                subBuilder = group_.toBuilder();
+              if (payloadCase_ == 6) {
+                subBuilder = ((routing.MsgInterface.Group) payload_).toBuilder();
               }
-              group_ = input.readMessage(routing.MsgInterface.Group.PARSER, extensionRegistry);
+              payload_ = input.readMessage(routing.MsgInterface.Group.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(group_);
-                group_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom((routing.MsgInterface.Group) payload_);
+                payload_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000020;
+              payloadCase_ = 6;
               break;
             }
             case 58: {
               routing.MsgInterface.MessagesRequest.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000040) == 0x00000040)) {
-                subBuilder = messagesRequest_.toBuilder();
+              if (payloadCase_ == 7) {
+                subBuilder = ((routing.MsgInterface.MessagesRequest) payload_).toBuilder();
               }
-              messagesRequest_ = input.readMessage(routing.MsgInterface.MessagesRequest.PARSER, extensionRegistry);
+              payload_ = input.readMessage(routing.MsgInterface.MessagesRequest.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(messagesRequest_);
-                messagesRequest_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom((routing.MsgInterface.MessagesRequest) payload_);
+                payload_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000040;
+              payloadCase_ = 7;
               break;
             }
             case 66: {
               routing.MsgInterface.MessagesResponse.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000080) == 0x00000080)) {
-                subBuilder = messagesResponse_.toBuilder();
+              if (payloadCase_ == 8) {
+                subBuilder = ((routing.MsgInterface.MessagesResponse) payload_).toBuilder();
               }
-              messagesResponse_ = input.readMessage(routing.MsgInterface.MessagesResponse.PARSER, extensionRegistry);
+              payload_ = input.readMessage(routing.MsgInterface.MessagesResponse.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(messagesResponse_);
-                messagesResponse_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom((routing.MsgInterface.MessagesResponse) payload_);
+                payload_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000080;
+              payloadCase_ = 8;
               break;
             }
             case 74: {
+              routing.MsgInterface.Response.Builder subBuilder = null;
+              if (payloadCase_ == 9) {
+                subBuilder = ((routing.MsgInterface.Response) payload_).toBuilder();
+              }
+              payload_ = input.readMessage(routing.MsgInterface.Response.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((routing.MsgInterface.Response) payload_);
+                payload_ = subBuilder.buildPartial();
+              }
+              payloadCase_ = 9;
+              break;
+            }
+            case 82: {
               routing.MsgInterface.Header.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000100) == 0x00000100)) {
+              if (((bitField0_ & 0x00000200) == 0x00000200)) {
                 subBuilder = header_.toBuilder();
               }
               header_ = input.readMessage(routing.MsgInterface.Header.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(header_);
                 header_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000100;
-              break;
-            }
-            case 82: {
-              routing.MsgInterface.Response.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000200) == 0x00000200)) {
-                subBuilder = response_.toBuilder();
-              }
-              response_ = input.readMessage(routing.MsgInterface.Response.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(response_);
-                response_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000200;
               break;
@@ -515,6 +515,10 @@ public final class MsgInterface {
       NETWORKDISCOVERYPACKET(3),
       USER(4),
       MESSAGE(5),
+      GROUP(6),
+      MESSAGESREQUEST(7),
+      MESSAGESRESPONSE(8),
+      RESPONSE(9),
       PAYLOAD_NOT_SET(0);
       private int value = 0;
       private PayloadCase(int value) {
@@ -525,6 +529,10 @@ public final class MsgInterface {
           case 3: return NETWORKDISCOVERYPACKET;
           case 4: return USER;
           case 5: return MESSAGE;
+          case 6: return GROUP;
+          case 7: return MESSAGESREQUEST;
+          case 8: return MESSAGESRESPONSE;
+          case 9: return RESPONSE;
           case 0: return PAYLOAD_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -658,118 +666,134 @@ public final class MsgInterface {
     }
 
     public static final int GROUP_FIELD_NUMBER = 6;
-    private routing.MsgInterface.Group group_;
     /**
      * <code>optional .Group group = 6;</code>
      */
     public boolean hasGroup() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return payloadCase_ == 6;
     }
     /**
      * <code>optional .Group group = 6;</code>
      */
     public routing.MsgInterface.Group getGroup() {
-      return group_;
+      if (payloadCase_ == 6) {
+         return (routing.MsgInterface.Group) payload_;
+      }
+      return routing.MsgInterface.Group.getDefaultInstance();
     }
     /**
      * <code>optional .Group group = 6;</code>
      */
     public routing.MsgInterface.GroupOrBuilder getGroupOrBuilder() {
-      return group_;
+      if (payloadCase_ == 6) {
+         return (routing.MsgInterface.Group) payload_;
+      }
+      return routing.MsgInterface.Group.getDefaultInstance();
     }
 
     public static final int MESSAGESREQUEST_FIELD_NUMBER = 7;
-    private routing.MsgInterface.MessagesRequest messagesRequest_;
     /**
      * <code>optional .MessagesRequest messagesRequest = 7;</code>
      */
     public boolean hasMessagesRequest() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+      return payloadCase_ == 7;
     }
     /**
      * <code>optional .MessagesRequest messagesRequest = 7;</code>
      */
     public routing.MsgInterface.MessagesRequest getMessagesRequest() {
-      return messagesRequest_;
+      if (payloadCase_ == 7) {
+         return (routing.MsgInterface.MessagesRequest) payload_;
+      }
+      return routing.MsgInterface.MessagesRequest.getDefaultInstance();
     }
     /**
      * <code>optional .MessagesRequest messagesRequest = 7;</code>
      */
     public routing.MsgInterface.MessagesRequestOrBuilder getMessagesRequestOrBuilder() {
-      return messagesRequest_;
+      if (payloadCase_ == 7) {
+         return (routing.MsgInterface.MessagesRequest) payload_;
+      }
+      return routing.MsgInterface.MessagesRequest.getDefaultInstance();
     }
 
     public static final int MESSAGESRESPONSE_FIELD_NUMBER = 8;
-    private routing.MsgInterface.MessagesResponse messagesResponse_;
     /**
      * <code>optional .MessagesResponse messagesResponse = 8;</code>
      */
     public boolean hasMessagesResponse() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
+      return payloadCase_ == 8;
     }
     /**
      * <code>optional .MessagesResponse messagesResponse = 8;</code>
      */
     public routing.MsgInterface.MessagesResponse getMessagesResponse() {
-      return messagesResponse_;
+      if (payloadCase_ == 8) {
+         return (routing.MsgInterface.MessagesResponse) payload_;
+      }
+      return routing.MsgInterface.MessagesResponse.getDefaultInstance();
     }
     /**
      * <code>optional .MessagesResponse messagesResponse = 8;</code>
      */
     public routing.MsgInterface.MessagesResponseOrBuilder getMessagesResponseOrBuilder() {
-      return messagesResponse_;
+      if (payloadCase_ == 8) {
+         return (routing.MsgInterface.MessagesResponse) payload_;
+      }
+      return routing.MsgInterface.MessagesResponse.getDefaultInstance();
     }
 
-    public static final int HEADER_FIELD_NUMBER = 9;
-    private routing.MsgInterface.Header header_;
+    public static final int RESPONSE_FIELD_NUMBER = 9;
     /**
-     * <code>optional .Header header = 9;</code>
+     * <code>optional .Response response = 9;</code>
      */
-    public boolean hasHeader() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
+    public boolean hasResponse() {
+      return payloadCase_ == 9;
     }
     /**
-     * <code>optional .Header header = 9;</code>
+     * <code>optional .Response response = 9;</code>
+     */
+    public routing.MsgInterface.Response getResponse() {
+      if (payloadCase_ == 9) {
+         return (routing.MsgInterface.Response) payload_;
+      }
+      return routing.MsgInterface.Response.getDefaultInstance();
+    }
+    /**
+     * <code>optional .Response response = 9;</code>
+     */
+    public routing.MsgInterface.ResponseOrBuilder getResponseOrBuilder() {
+      if (payloadCase_ == 9) {
+         return (routing.MsgInterface.Response) payload_;
+      }
+      return routing.MsgInterface.Response.getDefaultInstance();
+    }
+
+    public static final int HEADER_FIELD_NUMBER = 10;
+    private routing.MsgInterface.Header header_;
+    /**
+     * <code>optional .Header header = 10;</code>
+     */
+    public boolean hasHeader() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
+    }
+    /**
+     * <code>optional .Header header = 10;</code>
      */
     public routing.MsgInterface.Header getHeader() {
       return header_;
     }
     /**
-     * <code>optional .Header header = 9;</code>
+     * <code>optional .Header header = 10;</code>
      */
     public routing.MsgInterface.HeaderOrBuilder getHeaderOrBuilder() {
       return header_;
     }
 
-    public static final int RESPONSE_FIELD_NUMBER = 10;
-    private routing.MsgInterface.Response response_;
-    /**
-     * <code>optional .Response response = 10;</code>
-     */
-    public boolean hasResponse() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
-    }
-    /**
-     * <code>optional .Response response = 10;</code>
-     */
-    public routing.MsgInterface.Response getResponse() {
-      return response_;
-    }
-    /**
-     * <code>optional .Response response = 10;</code>
-     */
-    public routing.MsgInterface.ResponseOrBuilder getResponseOrBuilder() {
-      return response_;
-    }
-
     private void initFields() {
       id_ = 0L;
       path_ = routing.MsgInterface.Route.Path.PING;
-      group_ = routing.MsgInterface.Group.getDefaultInstance();
-      messagesRequest_ = routing.MsgInterface.MessagesRequest.getDefaultInstance();
-      messagesResponse_ = routing.MsgInterface.MessagesResponse.getDefaultInstance();
       header_ = routing.MsgInterface.Header.getDefaultInstance();
-      response_ = routing.MsgInterface.Response.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -821,14 +845,14 @@ public final class MsgInterface {
           return false;
         }
       }
-      if (hasHeader()) {
-        if (!getHeader().isInitialized()) {
+      if (hasResponse()) {
+        if (!getResponse().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
       }
-      if (hasResponse()) {
-        if (!getResponse().isInitialized()) {
+      if (hasHeader()) {
+        if (!getHeader().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -855,20 +879,20 @@ public final class MsgInterface {
       if (payloadCase_ == 5) {
         output.writeMessage(5, (routing.MsgInterface.Message) payload_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeMessage(6, group_);
+      if (payloadCase_ == 6) {
+        output.writeMessage(6, (routing.MsgInterface.Group) payload_);
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeMessage(7, messagesRequest_);
+      if (payloadCase_ == 7) {
+        output.writeMessage(7, (routing.MsgInterface.MessagesRequest) payload_);
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        output.writeMessage(8, messagesResponse_);
+      if (payloadCase_ == 8) {
+        output.writeMessage(8, (routing.MsgInterface.MessagesResponse) payload_);
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeMessage(9, header_);
+      if (payloadCase_ == 9) {
+        output.writeMessage(9, (routing.MsgInterface.Response) payload_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
-        output.writeMessage(10, response_);
+        output.writeMessage(10, header_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -899,25 +923,25 @@ public final class MsgInterface {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, (routing.MsgInterface.Message) payload_);
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (payloadCase_ == 6) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, group_);
+          .computeMessageSize(6, (routing.MsgInterface.Group) payload_);
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (payloadCase_ == 7) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, messagesRequest_);
+          .computeMessageSize(7, (routing.MsgInterface.MessagesRequest) payload_);
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (payloadCase_ == 8) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, messagesResponse_);
+          .computeMessageSize(8, (routing.MsgInterface.MessagesResponse) payload_);
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+      if (payloadCase_ == 9) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, header_);
+          .computeMessageSize(9, (routing.MsgInterface.Response) payload_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(10, response_);
+          .computeMessageSize(10, header_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1028,11 +1052,7 @@ public final class MsgInterface {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getGroupFieldBuilder();
-          getMessagesRequestFieldBuilder();
-          getMessagesResponseFieldBuilder();
           getHeaderFieldBuilder();
-          getResponseFieldBuilder();
         }
       }
       private static Builder create() {
@@ -1045,34 +1065,10 @@ public final class MsgInterface {
         bitField0_ = (bitField0_ & ~0x00000001);
         path_ = routing.MsgInterface.Route.Path.PING;
         bitField0_ = (bitField0_ & ~0x00000002);
-        if (groupBuilder_ == null) {
-          group_ = routing.MsgInterface.Group.getDefaultInstance();
-        } else {
-          groupBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000020);
-        if (messagesRequestBuilder_ == null) {
-          messagesRequest_ = routing.MsgInterface.MessagesRequest.getDefaultInstance();
-        } else {
-          messagesRequestBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000040);
-        if (messagesResponseBuilder_ == null) {
-          messagesResponse_ = routing.MsgInterface.MessagesResponse.getDefaultInstance();
-        } else {
-          messagesResponseBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000080);
         if (headerBuilder_ == null) {
           header_ = routing.MsgInterface.Header.getDefaultInstance();
         } else {
           headerBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000100);
-        if (responseBuilder_ == null) {
-          response_ = routing.MsgInterface.Response.getDefaultInstance();
-        } else {
-          responseBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000200);
         payloadCase_ = 0;
@@ -1134,45 +1130,41 @@ public final class MsgInterface {
             result.payload_ = messageBuilder_.build();
           }
         }
-        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-          to_bitField0_ |= 0x00000020;
+        if (payloadCase_ == 6) {
+          if (groupBuilder_ == null) {
+            result.payload_ = payload_;
+          } else {
+            result.payload_ = groupBuilder_.build();
+          }
         }
-        if (groupBuilder_ == null) {
-          result.group_ = group_;
-        } else {
-          result.group_ = groupBuilder_.build();
+        if (payloadCase_ == 7) {
+          if (messagesRequestBuilder_ == null) {
+            result.payload_ = payload_;
+          } else {
+            result.payload_ = messagesRequestBuilder_.build();
+          }
         }
-        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-          to_bitField0_ |= 0x00000040;
+        if (payloadCase_ == 8) {
+          if (messagesResponseBuilder_ == null) {
+            result.payload_ = payload_;
+          } else {
+            result.payload_ = messagesResponseBuilder_.build();
+          }
         }
-        if (messagesRequestBuilder_ == null) {
-          result.messagesRequest_ = messagesRequest_;
-        } else {
-          result.messagesRequest_ = messagesRequestBuilder_.build();
+        if (payloadCase_ == 9) {
+          if (responseBuilder_ == null) {
+            result.payload_ = payload_;
+          } else {
+            result.payload_ = responseBuilder_.build();
+          }
         }
-        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-          to_bitField0_ |= 0x00000080;
-        }
-        if (messagesResponseBuilder_ == null) {
-          result.messagesResponse_ = messagesResponse_;
-        } else {
-          result.messagesResponse_ = messagesResponseBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-          to_bitField0_ |= 0x00000100;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000200;
         }
         if (headerBuilder_ == null) {
           result.header_ = header_;
         } else {
           result.header_ = headerBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
-          to_bitField0_ |= 0x00000200;
-        }
-        if (responseBuilder_ == null) {
-          result.response_ = response_;
-        } else {
-          result.response_ = responseBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         result.payloadCase_ = payloadCase_;
@@ -1197,20 +1189,8 @@ public final class MsgInterface {
         if (other.hasPath()) {
           setPath(other.getPath());
         }
-        if (other.hasGroup()) {
-          mergeGroup(other.getGroup());
-        }
-        if (other.hasMessagesRequest()) {
-          mergeMessagesRequest(other.getMessagesRequest());
-        }
-        if (other.hasMessagesResponse()) {
-          mergeMessagesResponse(other.getMessagesResponse());
-        }
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
-        }
-        if (other.hasResponse()) {
-          mergeResponse(other.getResponse());
         }
         switch (other.getPayloadCase()) {
           case NETWORKDISCOVERYPACKET: {
@@ -1223,6 +1203,22 @@ public final class MsgInterface {
           }
           case MESSAGE: {
             mergeMessage(other.getMessage());
+            break;
+          }
+          case GROUP: {
+            mergeGroup(other.getGroup());
+            break;
+          }
+          case MESSAGESREQUEST: {
+            mergeMessagesRequest(other.getMessagesRequest());
+            break;
+          }
+          case MESSAGESRESPONSE: {
+            mergeMessagesResponse(other.getMessagesResponse());
+            break;
+          }
+          case RESPONSE: {
+            mergeResponse(other.getResponse());
             break;
           }
           case PAYLOAD_NOT_SET: {
@@ -1278,14 +1274,14 @@ public final class MsgInterface {
             return false;
           }
         }
-        if (hasHeader()) {
-          if (!getHeader().isInitialized()) {
+        if (hasResponse()) {
+          if (!getResponse().isInitialized()) {
             
             return false;
           }
         }
-        if (hasResponse()) {
-          if (!getResponse().isInitialized()) {
+        if (hasHeader()) {
+          if (!getHeader().isInitialized()) {
             
             return false;
           }
@@ -1815,23 +1811,28 @@ public final class MsgInterface {
         return messageBuilder_;
       }
 
-      private routing.MsgInterface.Group group_ = routing.MsgInterface.Group.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           routing.MsgInterface.Group, routing.MsgInterface.Group.Builder, routing.MsgInterface.GroupOrBuilder> groupBuilder_;
       /**
        * <code>optional .Group group = 6;</code>
        */
       public boolean hasGroup() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
+        return payloadCase_ == 6;
       }
       /**
        * <code>optional .Group group = 6;</code>
        */
       public routing.MsgInterface.Group getGroup() {
         if (groupBuilder_ == null) {
-          return group_;
+          if (payloadCase_ == 6) {
+            return (routing.MsgInterface.Group) payload_;
+          }
+          return routing.MsgInterface.Group.getDefaultInstance();
         } else {
-          return groupBuilder_.getMessage();
+          if (payloadCase_ == 6) {
+            return groupBuilder_.getMessage();
+          }
+          return routing.MsgInterface.Group.getDefaultInstance();
         }
       }
       /**
@@ -1842,12 +1843,12 @@ public final class MsgInterface {
           if (value == null) {
             throw new NullPointerException();
           }
-          group_ = value;
+          payload_ = value;
           onChanged();
         } else {
           groupBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000020;
+        payloadCase_ = 6;
         return this;
       }
       /**
@@ -1856,12 +1857,12 @@ public final class MsgInterface {
       public Builder setGroup(
           routing.MsgInterface.Group.Builder builderForValue) {
         if (groupBuilder_ == null) {
-          group_ = builderForValue.build();
+          payload_ = builderForValue.build();
           onChanged();
         } else {
           groupBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000020;
+        payloadCase_ = 6;
         return this;
       }
       /**
@@ -1869,18 +1870,21 @@ public final class MsgInterface {
        */
       public Builder mergeGroup(routing.MsgInterface.Group value) {
         if (groupBuilder_ == null) {
-          if (((bitField0_ & 0x00000020) == 0x00000020) &&
-              group_ != routing.MsgInterface.Group.getDefaultInstance()) {
-            group_ =
-              routing.MsgInterface.Group.newBuilder(group_).mergeFrom(value).buildPartial();
+          if (payloadCase_ == 6 &&
+              payload_ != routing.MsgInterface.Group.getDefaultInstance()) {
+            payload_ = routing.MsgInterface.Group.newBuilder((routing.MsgInterface.Group) payload_)
+                .mergeFrom(value).buildPartial();
           } else {
-            group_ = value;
+            payload_ = value;
           }
           onChanged();
         } else {
-          groupBuilder_.mergeFrom(value);
+          if (payloadCase_ == 6) {
+            groupBuilder_.mergeFrom(value);
+          }
+          groupBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000020;
+        payloadCase_ = 6;
         return this;
       }
       /**
@@ -1888,30 +1892,37 @@ public final class MsgInterface {
        */
       public Builder clearGroup() {
         if (groupBuilder_ == null) {
-          group_ = routing.MsgInterface.Group.getDefaultInstance();
-          onChanged();
+          if (payloadCase_ == 6) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
         } else {
+          if (payloadCase_ == 6) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
           groupBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
       /**
        * <code>optional .Group group = 6;</code>
        */
       public routing.MsgInterface.Group.Builder getGroupBuilder() {
-        bitField0_ |= 0x00000020;
-        onChanged();
         return getGroupFieldBuilder().getBuilder();
       }
       /**
        * <code>optional .Group group = 6;</code>
        */
       public routing.MsgInterface.GroupOrBuilder getGroupOrBuilder() {
-        if (groupBuilder_ != null) {
+        if ((payloadCase_ == 6) && (groupBuilder_ != null)) {
           return groupBuilder_.getMessageOrBuilder();
         } else {
-          return group_;
+          if (payloadCase_ == 6) {
+            return (routing.MsgInterface.Group) payload_;
+          }
+          return routing.MsgInterface.Group.getDefaultInstance();
         }
       }
       /**
@@ -1921,33 +1932,42 @@ public final class MsgInterface {
           routing.MsgInterface.Group, routing.MsgInterface.Group.Builder, routing.MsgInterface.GroupOrBuilder> 
           getGroupFieldBuilder() {
         if (groupBuilder_ == null) {
+          if (!(payloadCase_ == 6)) {
+            payload_ = routing.MsgInterface.Group.getDefaultInstance();
+          }
           groupBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               routing.MsgInterface.Group, routing.MsgInterface.Group.Builder, routing.MsgInterface.GroupOrBuilder>(
-                  getGroup(),
+                  (routing.MsgInterface.Group) payload_,
                   getParentForChildren(),
                   isClean());
-          group_ = null;
+          payload_ = null;
         }
+        payloadCase_ = 6;
         return groupBuilder_;
       }
 
-      private routing.MsgInterface.MessagesRequest messagesRequest_ = routing.MsgInterface.MessagesRequest.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           routing.MsgInterface.MessagesRequest, routing.MsgInterface.MessagesRequest.Builder, routing.MsgInterface.MessagesRequestOrBuilder> messagesRequestBuilder_;
       /**
        * <code>optional .MessagesRequest messagesRequest = 7;</code>
        */
       public boolean hasMessagesRequest() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
+        return payloadCase_ == 7;
       }
       /**
        * <code>optional .MessagesRequest messagesRequest = 7;</code>
        */
       public routing.MsgInterface.MessagesRequest getMessagesRequest() {
         if (messagesRequestBuilder_ == null) {
-          return messagesRequest_;
+          if (payloadCase_ == 7) {
+            return (routing.MsgInterface.MessagesRequest) payload_;
+          }
+          return routing.MsgInterface.MessagesRequest.getDefaultInstance();
         } else {
-          return messagesRequestBuilder_.getMessage();
+          if (payloadCase_ == 7) {
+            return messagesRequestBuilder_.getMessage();
+          }
+          return routing.MsgInterface.MessagesRequest.getDefaultInstance();
         }
       }
       /**
@@ -1958,12 +1978,12 @@ public final class MsgInterface {
           if (value == null) {
             throw new NullPointerException();
           }
-          messagesRequest_ = value;
+          payload_ = value;
           onChanged();
         } else {
           messagesRequestBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000040;
+        payloadCase_ = 7;
         return this;
       }
       /**
@@ -1972,12 +1992,12 @@ public final class MsgInterface {
       public Builder setMessagesRequest(
           routing.MsgInterface.MessagesRequest.Builder builderForValue) {
         if (messagesRequestBuilder_ == null) {
-          messagesRequest_ = builderForValue.build();
+          payload_ = builderForValue.build();
           onChanged();
         } else {
           messagesRequestBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000040;
+        payloadCase_ = 7;
         return this;
       }
       /**
@@ -1985,18 +2005,21 @@ public final class MsgInterface {
        */
       public Builder mergeMessagesRequest(routing.MsgInterface.MessagesRequest value) {
         if (messagesRequestBuilder_ == null) {
-          if (((bitField0_ & 0x00000040) == 0x00000040) &&
-              messagesRequest_ != routing.MsgInterface.MessagesRequest.getDefaultInstance()) {
-            messagesRequest_ =
-              routing.MsgInterface.MessagesRequest.newBuilder(messagesRequest_).mergeFrom(value).buildPartial();
+          if (payloadCase_ == 7 &&
+              payload_ != routing.MsgInterface.MessagesRequest.getDefaultInstance()) {
+            payload_ = routing.MsgInterface.MessagesRequest.newBuilder((routing.MsgInterface.MessagesRequest) payload_)
+                .mergeFrom(value).buildPartial();
           } else {
-            messagesRequest_ = value;
+            payload_ = value;
           }
           onChanged();
         } else {
-          messagesRequestBuilder_.mergeFrom(value);
+          if (payloadCase_ == 7) {
+            messagesRequestBuilder_.mergeFrom(value);
+          }
+          messagesRequestBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000040;
+        payloadCase_ = 7;
         return this;
       }
       /**
@@ -2004,30 +2027,37 @@ public final class MsgInterface {
        */
       public Builder clearMessagesRequest() {
         if (messagesRequestBuilder_ == null) {
-          messagesRequest_ = routing.MsgInterface.MessagesRequest.getDefaultInstance();
-          onChanged();
+          if (payloadCase_ == 7) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
         } else {
+          if (payloadCase_ == 7) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
           messagesRequestBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       /**
        * <code>optional .MessagesRequest messagesRequest = 7;</code>
        */
       public routing.MsgInterface.MessagesRequest.Builder getMessagesRequestBuilder() {
-        bitField0_ |= 0x00000040;
-        onChanged();
         return getMessagesRequestFieldBuilder().getBuilder();
       }
       /**
        * <code>optional .MessagesRequest messagesRequest = 7;</code>
        */
       public routing.MsgInterface.MessagesRequestOrBuilder getMessagesRequestOrBuilder() {
-        if (messagesRequestBuilder_ != null) {
+        if ((payloadCase_ == 7) && (messagesRequestBuilder_ != null)) {
           return messagesRequestBuilder_.getMessageOrBuilder();
         } else {
-          return messagesRequest_;
+          if (payloadCase_ == 7) {
+            return (routing.MsgInterface.MessagesRequest) payload_;
+          }
+          return routing.MsgInterface.MessagesRequest.getDefaultInstance();
         }
       }
       /**
@@ -2037,33 +2067,42 @@ public final class MsgInterface {
           routing.MsgInterface.MessagesRequest, routing.MsgInterface.MessagesRequest.Builder, routing.MsgInterface.MessagesRequestOrBuilder> 
           getMessagesRequestFieldBuilder() {
         if (messagesRequestBuilder_ == null) {
+          if (!(payloadCase_ == 7)) {
+            payload_ = routing.MsgInterface.MessagesRequest.getDefaultInstance();
+          }
           messagesRequestBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               routing.MsgInterface.MessagesRequest, routing.MsgInterface.MessagesRequest.Builder, routing.MsgInterface.MessagesRequestOrBuilder>(
-                  getMessagesRequest(),
+                  (routing.MsgInterface.MessagesRequest) payload_,
                   getParentForChildren(),
                   isClean());
-          messagesRequest_ = null;
+          payload_ = null;
         }
+        payloadCase_ = 7;
         return messagesRequestBuilder_;
       }
 
-      private routing.MsgInterface.MessagesResponse messagesResponse_ = routing.MsgInterface.MessagesResponse.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           routing.MsgInterface.MessagesResponse, routing.MsgInterface.MessagesResponse.Builder, routing.MsgInterface.MessagesResponseOrBuilder> messagesResponseBuilder_;
       /**
        * <code>optional .MessagesResponse messagesResponse = 8;</code>
        */
       public boolean hasMessagesResponse() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
+        return payloadCase_ == 8;
       }
       /**
        * <code>optional .MessagesResponse messagesResponse = 8;</code>
        */
       public routing.MsgInterface.MessagesResponse getMessagesResponse() {
         if (messagesResponseBuilder_ == null) {
-          return messagesResponse_;
+          if (payloadCase_ == 8) {
+            return (routing.MsgInterface.MessagesResponse) payload_;
+          }
+          return routing.MsgInterface.MessagesResponse.getDefaultInstance();
         } else {
-          return messagesResponseBuilder_.getMessage();
+          if (payloadCase_ == 8) {
+            return messagesResponseBuilder_.getMessage();
+          }
+          return routing.MsgInterface.MessagesResponse.getDefaultInstance();
         }
       }
       /**
@@ -2074,12 +2113,12 @@ public final class MsgInterface {
           if (value == null) {
             throw new NullPointerException();
           }
-          messagesResponse_ = value;
+          payload_ = value;
           onChanged();
         } else {
           messagesResponseBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000080;
+        payloadCase_ = 8;
         return this;
       }
       /**
@@ -2088,12 +2127,12 @@ public final class MsgInterface {
       public Builder setMessagesResponse(
           routing.MsgInterface.MessagesResponse.Builder builderForValue) {
         if (messagesResponseBuilder_ == null) {
-          messagesResponse_ = builderForValue.build();
+          payload_ = builderForValue.build();
           onChanged();
         } else {
           messagesResponseBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000080;
+        payloadCase_ = 8;
         return this;
       }
       /**
@@ -2101,18 +2140,21 @@ public final class MsgInterface {
        */
       public Builder mergeMessagesResponse(routing.MsgInterface.MessagesResponse value) {
         if (messagesResponseBuilder_ == null) {
-          if (((bitField0_ & 0x00000080) == 0x00000080) &&
-              messagesResponse_ != routing.MsgInterface.MessagesResponse.getDefaultInstance()) {
-            messagesResponse_ =
-              routing.MsgInterface.MessagesResponse.newBuilder(messagesResponse_).mergeFrom(value).buildPartial();
+          if (payloadCase_ == 8 &&
+              payload_ != routing.MsgInterface.MessagesResponse.getDefaultInstance()) {
+            payload_ = routing.MsgInterface.MessagesResponse.newBuilder((routing.MsgInterface.MessagesResponse) payload_)
+                .mergeFrom(value).buildPartial();
           } else {
-            messagesResponse_ = value;
+            payload_ = value;
           }
           onChanged();
         } else {
-          messagesResponseBuilder_.mergeFrom(value);
+          if (payloadCase_ == 8) {
+            messagesResponseBuilder_.mergeFrom(value);
+          }
+          messagesResponseBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000080;
+        payloadCase_ = 8;
         return this;
       }
       /**
@@ -2120,30 +2162,37 @@ public final class MsgInterface {
        */
       public Builder clearMessagesResponse() {
         if (messagesResponseBuilder_ == null) {
-          messagesResponse_ = routing.MsgInterface.MessagesResponse.getDefaultInstance();
-          onChanged();
+          if (payloadCase_ == 8) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
         } else {
+          if (payloadCase_ == 8) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
           messagesResponseBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
       /**
        * <code>optional .MessagesResponse messagesResponse = 8;</code>
        */
       public routing.MsgInterface.MessagesResponse.Builder getMessagesResponseBuilder() {
-        bitField0_ |= 0x00000080;
-        onChanged();
         return getMessagesResponseFieldBuilder().getBuilder();
       }
       /**
        * <code>optional .MessagesResponse messagesResponse = 8;</code>
        */
       public routing.MsgInterface.MessagesResponseOrBuilder getMessagesResponseOrBuilder() {
-        if (messagesResponseBuilder_ != null) {
+        if ((payloadCase_ == 8) && (messagesResponseBuilder_ != null)) {
           return messagesResponseBuilder_.getMessageOrBuilder();
         } else {
-          return messagesResponse_;
+          if (payloadCase_ == 8) {
+            return (routing.MsgInterface.MessagesResponse) payload_;
+          }
+          return routing.MsgInterface.MessagesResponse.getDefaultInstance();
         }
       }
       /**
@@ -2153,27 +2202,166 @@ public final class MsgInterface {
           routing.MsgInterface.MessagesResponse, routing.MsgInterface.MessagesResponse.Builder, routing.MsgInterface.MessagesResponseOrBuilder> 
           getMessagesResponseFieldBuilder() {
         if (messagesResponseBuilder_ == null) {
+          if (!(payloadCase_ == 8)) {
+            payload_ = routing.MsgInterface.MessagesResponse.getDefaultInstance();
+          }
           messagesResponseBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               routing.MsgInterface.MessagesResponse, routing.MsgInterface.MessagesResponse.Builder, routing.MsgInterface.MessagesResponseOrBuilder>(
-                  getMessagesResponse(),
+                  (routing.MsgInterface.MessagesResponse) payload_,
                   getParentForChildren(),
                   isClean());
-          messagesResponse_ = null;
+          payload_ = null;
         }
+        payloadCase_ = 8;
         return messagesResponseBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilder<
+          routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder> responseBuilder_;
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public boolean hasResponse() {
+        return payloadCase_ == 9;
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public routing.MsgInterface.Response getResponse() {
+        if (responseBuilder_ == null) {
+          if (payloadCase_ == 9) {
+            return (routing.MsgInterface.Response) payload_;
+          }
+          return routing.MsgInterface.Response.getDefaultInstance();
+        } else {
+          if (payloadCase_ == 9) {
+            return responseBuilder_.getMessage();
+          }
+          return routing.MsgInterface.Response.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public Builder setResponse(routing.MsgInterface.Response value) {
+        if (responseBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          payload_ = value;
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(value);
+        }
+        payloadCase_ = 9;
+        return this;
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public Builder setResponse(
+          routing.MsgInterface.Response.Builder builderForValue) {
+        if (responseBuilder_ == null) {
+          payload_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseBuilder_.setMessage(builderForValue.build());
+        }
+        payloadCase_ = 9;
+        return this;
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public Builder mergeResponse(routing.MsgInterface.Response value) {
+        if (responseBuilder_ == null) {
+          if (payloadCase_ == 9 &&
+              payload_ != routing.MsgInterface.Response.getDefaultInstance()) {
+            payload_ = routing.MsgInterface.Response.newBuilder((routing.MsgInterface.Response) payload_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            payload_ = value;
+          }
+          onChanged();
+        } else {
+          if (payloadCase_ == 9) {
+            responseBuilder_.mergeFrom(value);
+          }
+          responseBuilder_.setMessage(value);
+        }
+        payloadCase_ = 9;
+        return this;
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public Builder clearResponse() {
+        if (responseBuilder_ == null) {
+          if (payloadCase_ == 9) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
+        } else {
+          if (payloadCase_ == 9) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
+          responseBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public routing.MsgInterface.Response.Builder getResponseBuilder() {
+        return getResponseFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      public routing.MsgInterface.ResponseOrBuilder getResponseOrBuilder() {
+        if ((payloadCase_ == 9) && (responseBuilder_ != null)) {
+          return responseBuilder_.getMessageOrBuilder();
+        } else {
+          if (payloadCase_ == 9) {
+            return (routing.MsgInterface.Response) payload_;
+          }
+          return routing.MsgInterface.Response.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .Response response = 9;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder> 
+          getResponseFieldBuilder() {
+        if (responseBuilder_ == null) {
+          if (!(payloadCase_ == 9)) {
+            payload_ = routing.MsgInterface.Response.getDefaultInstance();
+          }
+          responseBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder>(
+                  (routing.MsgInterface.Response) payload_,
+                  getParentForChildren(),
+                  isClean());
+          payload_ = null;
+        }
+        payloadCase_ = 9;
+        return responseBuilder_;
       }
 
       private routing.MsgInterface.Header header_ = routing.MsgInterface.Header.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           routing.MsgInterface.Header, routing.MsgInterface.Header.Builder, routing.MsgInterface.HeaderOrBuilder> headerBuilder_;
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public boolean hasHeader() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
+        return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public routing.MsgInterface.Header getHeader() {
         if (headerBuilder_ == null) {
@@ -2183,7 +2371,7 @@ public final class MsgInterface {
         }
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public Builder setHeader(routing.MsgInterface.Header value) {
         if (headerBuilder_ == null) {
@@ -2195,11 +2383,11 @@ public final class MsgInterface {
         } else {
           headerBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public Builder setHeader(
           routing.MsgInterface.Header.Builder builderForValue) {
@@ -2209,15 +2397,15 @@ public final class MsgInterface {
         } else {
           headerBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public Builder mergeHeader(routing.MsgInterface.Header value) {
         if (headerBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100) &&
+          if (((bitField0_ & 0x00000200) == 0x00000200) &&
               header_ != routing.MsgInterface.Header.getDefaultInstance()) {
             header_ =
               routing.MsgInterface.Header.newBuilder(header_).mergeFrom(value).buildPartial();
@@ -2228,11 +2416,11 @@ public final class MsgInterface {
         } else {
           headerBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public Builder clearHeader() {
         if (headerBuilder_ == null) {
@@ -2241,19 +2429,19 @@ public final class MsgInterface {
         } else {
           headerBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public routing.MsgInterface.Header.Builder getHeaderBuilder() {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000200;
         onChanged();
         return getHeaderFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       public routing.MsgInterface.HeaderOrBuilder getHeaderOrBuilder() {
         if (headerBuilder_ != null) {
@@ -2263,7 +2451,7 @@ public final class MsgInterface {
         }
       }
       /**
-       * <code>optional .Header header = 9;</code>
+       * <code>optional .Header header = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           routing.MsgInterface.Header, routing.MsgInterface.Header.Builder, routing.MsgInterface.HeaderOrBuilder> 
@@ -2277,122 +2465,6 @@ public final class MsgInterface {
           header_ = null;
         }
         return headerBuilder_;
-      }
-
-      private routing.MsgInterface.Response response_ = routing.MsgInterface.Response.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
-          routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder> responseBuilder_;
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public boolean hasResponse() {
-        return ((bitField0_ & 0x00000200) == 0x00000200);
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public routing.MsgInterface.Response getResponse() {
-        if (responseBuilder_ == null) {
-          return response_;
-        } else {
-          return responseBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public Builder setResponse(routing.MsgInterface.Response value) {
-        if (responseBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          response_ = value;
-          onChanged();
-        } else {
-          responseBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public Builder setResponse(
-          routing.MsgInterface.Response.Builder builderForValue) {
-        if (responseBuilder_ == null) {
-          response_ = builderForValue.build();
-          onChanged();
-        } else {
-          responseBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public Builder mergeResponse(routing.MsgInterface.Response value) {
-        if (responseBuilder_ == null) {
-          if (((bitField0_ & 0x00000200) == 0x00000200) &&
-              response_ != routing.MsgInterface.Response.getDefaultInstance()) {
-            response_ =
-              routing.MsgInterface.Response.newBuilder(response_).mergeFrom(value).buildPartial();
-          } else {
-            response_ = value;
-          }
-          onChanged();
-        } else {
-          responseBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public Builder clearResponse() {
-        if (responseBuilder_ == null) {
-          response_ = routing.MsgInterface.Response.getDefaultInstance();
-          onChanged();
-        } else {
-          responseBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000200);
-        return this;
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public routing.MsgInterface.Response.Builder getResponseBuilder() {
-        bitField0_ |= 0x00000200;
-        onChanged();
-        return getResponseFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      public routing.MsgInterface.ResponseOrBuilder getResponseOrBuilder() {
-        if (responseBuilder_ != null) {
-          return responseBuilder_.getMessageOrBuilder();
-        } else {
-          return response_;
-        }
-      }
-      /**
-       * <code>optional .Response response = 10;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder> 
-          getResponseFieldBuilder() {
-        if (responseBuilder_ == null) {
-          responseBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              routing.MsgInterface.Response, routing.MsgInterface.Response.Builder, routing.MsgInterface.ResponseOrBuilder>(
-                  getResponse(),
-                  getParentForChildren(),
-                  isClean());
-          response_ = null;
-        }
-        return responseBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:Route)
@@ -3781,6 +3853,10 @@ public final class MsgInterface {
        * <code>ADDUSER = 2;</code>
        */
       ADDUSER(2, 2),
+      /**
+       * <code>GET = 3;</code>
+       */
+      GET(3, 3),
       ;
 
       /**
@@ -3795,6 +3871,10 @@ public final class MsgInterface {
        * <code>ADDUSER = 2;</code>
        */
       public static final int ADDUSER_VALUE = 2;
+      /**
+       * <code>GET = 3;</code>
+       */
+      public static final int GET_VALUE = 3;
 
 
       public final int getNumber() { return value; }
@@ -3804,6 +3884,7 @@ public final class MsgInterface {
           case 0: return CREATE;
           case 1: return DELETE;
           case 2: return ADDUSER;
+          case 3: return GET;
           default: return null;
         }
       }
@@ -6814,7 +6895,7 @@ public final class MsgInterface {
     routing.MsgInterface.MessagesResponse.Type getType();
 
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -6822,7 +6903,7 @@ public final class MsgInterface {
      */
     boolean hasId();
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -6830,7 +6911,7 @@ public final class MsgInterface {
      */
     java.lang.String getId();
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7083,7 +7164,7 @@ public final class MsgInterface {
     public static final int ID_FIELD_NUMBER = 2;
     private java.lang.Object id_;
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7093,7 +7174,7 @@ public final class MsgInterface {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7114,7 +7195,7 @@ public final class MsgInterface {
       }
     }
     /**
-     * <code>required string id = 2;</code>
+     * <code>optional string id = 2;</code>
      *
      * <pre>
      *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7181,10 +7262,6 @@ public final class MsgInterface {
       if (isInitialized == 0) return false;
 
       if (!hasType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasId()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -7463,10 +7540,6 @@ public final class MsgInterface {
           
           return false;
         }
-        if (!hasId()) {
-          
-          return false;
-        }
         for (int i = 0; i < getMessagesCount(); i++) {
           if (!getMessages(i).isInitialized()) {
             
@@ -7532,7 +7605,7 @@ public final class MsgInterface {
 
       private java.lang.Object id_ = "";
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7542,7 +7615,7 @@ public final class MsgInterface {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7563,7 +7636,7 @@ public final class MsgInterface {
         }
       }
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7583,7 +7656,7 @@ public final class MsgInterface {
         }
       }
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7600,7 +7673,7 @@ public final class MsgInterface {
         return this;
       }
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -7613,7 +7686,7 @@ public final class MsgInterface {
         return this;
       }
       /**
-       * <code>required string id = 2;</code>
+       * <code>optional string id = 2;</code>
        *
        * <pre>
        *would be groupId if the type is GROUP or else userId if the type is USER
@@ -8238,6 +8311,14 @@ public final class MsgInterface {
        * <code>RESPONSE = 1;</code>
        */
       RESPONSE(1, 1),
+      /**
+       * <code>REMOVE_NODE = 2;</code>
+       *
+       * <pre>
+       * Use this mode to ask other cluster to remove one of your nodes which is not up now. Or which is not the leader now. Teams must remove the node (details in packet) from their UDP discovery data structure.
+       * </pre>
+       */
+      REMOVE_NODE(2, 2),
       ;
 
       /**
@@ -8248,6 +8329,14 @@ public final class MsgInterface {
        * <code>RESPONSE = 1;</code>
        */
       public static final int RESPONSE_VALUE = 1;
+      /**
+       * <code>REMOVE_NODE = 2;</code>
+       *
+       * <pre>
+       * Use this mode to ask other cluster to remove one of your nodes which is not up now. Or which is not the leader now. Teams must remove the node (details in packet) from their UDP discovery data structure.
+       * </pre>
+       */
+      public static final int REMOVE_NODE_VALUE = 2;
 
 
       public final int getNumber() { return value; }
@@ -8256,6 +8345,7 @@ public final class MsgInterface {
         switch (value) {
           case 0: return REQUEST;
           case 1: return RESPONSE;
+          case 2: return REMOVE_NODE;
           default: return null;
         }
       }
@@ -10763,53 +10853,54 @@ public final class MsgInterface {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\023msg_interface.proto\"\357\003\n\005Route\022\n\n\002id\030\001 " +
+      "\n\023msg_interface.proto\"\367\003\n\005Route\022\n\n\002id\030\001 " +
       "\002(\003\022\031\n\004path\030\002 \002(\0162\013.Route.Path\0229\n\026networ" +
       "kDiscoveryPacket\030\003 \001(\0132\027.NetworkDiscover" +
       "yPacketH\000\022\025\n\004user\030\004 \001(\0132\005.UserH\000\022\033\n\007mess" +
-      "age\030\005 \001(\0132\010.MessageH\000\022\025\n\005group\030\006 \001(\0132\006.G" +
-      "roup\022)\n\017messagesRequest\030\007 \001(\0132\020.Messages" +
-      "Request\022+\n\020messagesResponse\030\010 \001(\0132\021.Mess" +
-      "agesResponse\022\027\n\006header\030\t \001(\0132\007.Header\022\033\n" +
-      "\010response\030\n \001(\0132\t.Response\"\237\001\n\004Path\022\010\n\004P" +
-      "ING\020\000\022\025\n\021NETWORK_DISCOVERY\020\001\022\010\n\004USER\020\002\022\013",
-      "\n\007MESSAGE\020\003\022\t\n\005GROUP\020\004\022\024\n\020MESSAGES_REQUE" +
-      "ST\020\005\022\025\n\021MESSAGES_RESPONSE\020\006\022\n\n\006HEADER\020\007\022" +
-      "\014\n\010RESPONSE\020\010\022\r\n\tREPLICATE\020\tB\t\n\007payload\"" +
-      "\246\001\n\004User\022\r\n\005uname\030\001 \002(\t\022\r\n\005email\030\002 \001(\t\022\020" +
-      "\n\010password\030\003 \001(\t\022\030\n\020recentActiveTime\030\004 \001" +
-      "(\t\022 \n\006action\030\005 \002(\0162\020.User.ActionType\"2\n\n" +
-      "ActionType\022\014\n\010REGISTER\020\000\022\n\n\006ACCESS\020\001\022\n\n\006" +
-      "DELETE\020\002\"\213\001\n\005Group\022\r\n\005gname\030\001 \002(\t\022\013\n\003gid" +
-      "\030\002 \001(\003\022!\n\006action\030\003 \002(\0162\021.Group.ActionTyp" +
-      "e\022\020\n\010username\030\004 \001(\t\"1\n\nActionType\022\n\n\006CRE",
-      "ATE\020\000\022\n\n\006DELETE\020\001\022\013\n\007ADDUSER\020\002\"\246\002\n\007Messa" +
-      "ge\022\033\n\004type\030\001 \002(\0162\r.Message.Type\022\020\n\010sende" +
-      "rId\030\002 \002(\t\022\017\n\007payload\030\003 \002(\t\022\022\n\nreceiverId" +
-      "\030\004 \002(\t\022\021\n\ttimestamp\030\005 \002(\t\022\037\n\006status\030\006 \001(" +
-      "\0162\017.Message.Status\022#\n\006action\030\007 \002(\0162\023.Mes" +
-      "sage.ActionType\".\n\nActionType\022\010\n\004POST\020\000\022" +
-      "\n\n\006UPDATE\020\001\022\n\n\006DELETE\020\002\"\035\n\004Type\022\n\n\006SINGL" +
-      "E\020\000\022\t\n\005GROUP\020\001\"\037\n\006Status\022\n\n\006ACTIVE\020\000\022\t\n\005" +
-      "STALE\020\001\"_\n\017MessagesRequest\022#\n\004type\030\001 \002(\016" +
-      "2\025.MessagesRequest.Type\022\n\n\002id\030\002 \002(\t\"\033\n\004T",
-      "ype\022\010\n\004USER\020\000\022\t\n\005GROUP\020\001\"}\n\020MessagesResp" +
-      "onse\022$\n\004type\030\001 \002(\0162\026.MessagesResponse.Ty" +
-      "pe\022\n\n\002id\030\002 \002(\t\022\032\n\010messages\030\003 \003(\0132\010.Messa" +
-      "ge\"\033\n\004Type\022\010\n\004USER\020\000\022\t\n\005GROUP\020\001\"\331\002\n\026Netw" +
-      "orkDiscoveryPacket\022*\n\004mode\030\001 \002(\0162\034.Netwo" +
-      "rkDiscoveryPacket.Mode\022D\n\006sender\030\002 \002(\0162\036" +
-      ".NetworkDiscoveryPacket.Sender:\024INTERNAL" +
-      "_SERVER_NODE\022\020\n\010groupTag\030\003 \001(\t\022\016\n\006nodeId" +
-      "\030\004 \001(\t\022\023\n\013nodeAddress\030\005 \002(\t\022\020\n\010nodePort\030" +
-      "\006 \002(\003\022\016\n\006secret\030\007 \002(\t\"Q\n\006Sender\022\030\n\024EXTER",
-      "NAL_SERVER_NODE\020\000\022\030\n\024INTERNAL_SERVER_NOD" +
-      "E\020\001\022\023\n\017END_USER_CLIENT\020\002\"!\n\004Mode\022\013\n\007REQU" +
-      "EST\020\000\022\014\n\010RESPONSE\020\001\"Y\n\006Header\022\032\n\004type\030\001 " +
-      "\002(\0162\014.Header.Type\"3\n\004Type\022\014\n\010INTERNAL\020\000\022" +
-      "\021\n\rINTER_CLUSTER\020\001\022\n\n\006CLIENT\020\002\"?\n\010Respon" +
-      "se\022\017\n\007success\030\001 \002(\010\022\017\n\007message\030\002 \001(\t\022\021\n\t" +
-      "errorCode\030\003 \001(\tB\013\n\007routingH\001"
+      "age\030\005 \001(\0132\010.MessageH\000\022\027\n\005group\030\006 \001(\0132\006.G" +
+      "roupH\000\022+\n\017messagesRequest\030\007 \001(\0132\020.Messag" +
+      "esRequestH\000\022-\n\020messagesResponse\030\010 \001(\0132\021." +
+      "MessagesResponseH\000\022\035\n\010response\030\t \001(\0132\t.R" +
+      "esponseH\000\022\027\n\006header\030\n \001(\0132\007.Header\"\237\001\n\004P" +
+      "ath\022\010\n\004PING\020\000\022\025\n\021NETWORK_DISCOVERY\020\001\022\010\n\004",
+      "USER\020\002\022\013\n\007MESSAGE\020\003\022\t\n\005GROUP\020\004\022\024\n\020MESSAG" +
+      "ES_REQUEST\020\005\022\025\n\021MESSAGES_RESPONSE\020\006\022\n\n\006H" +
+      "EADER\020\007\022\014\n\010RESPONSE\020\010\022\r\n\tREPLICATE\020\tB\t\n\007" +
+      "payload\"\246\001\n\004User\022\r\n\005uname\030\001 \002(\t\022\r\n\005email" +
+      "\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\030\n\020recentActive" +
+      "Time\030\004 \001(\t\022 \n\006action\030\005 \002(\0162\020.User.Action" +
+      "Type\"2\n\nActionType\022\014\n\010REGISTER\020\000\022\n\n\006ACCE" +
+      "SS\020\001\022\n\n\006DELETE\020\002\"\224\001\n\005Group\022\r\n\005gname\030\001 \002(" +
+      "\t\022\013\n\003gid\030\002 \001(\003\022!\n\006action\030\003 \002(\0162\021.Group.A" +
+      "ctionType\022\020\n\010username\030\004 \001(\t\":\n\nActionTyp",
+      "e\022\n\n\006CREATE\020\000\022\n\n\006DELETE\020\001\022\013\n\007ADDUSER\020\002\022\007" +
+      "\n\003GET\020\003\"\246\002\n\007Message\022\033\n\004type\030\001 \002(\0162\r.Mess" +
+      "age.Type\022\020\n\010senderId\030\002 \002(\t\022\017\n\007payload\030\003 " +
+      "\002(\t\022\022\n\nreceiverId\030\004 \002(\t\022\021\n\ttimestamp\030\005 \002" +
+      "(\t\022\037\n\006status\030\006 \001(\0162\017.Message.Status\022#\n\006a" +
+      "ction\030\007 \002(\0162\023.Message.ActionType\".\n\nActi" +
+      "onType\022\010\n\004POST\020\000\022\n\n\006UPDATE\020\001\022\n\n\006DELETE\020\002" +
+      "\"\035\n\004Type\022\n\n\006SINGLE\020\000\022\t\n\005GROUP\020\001\"\037\n\006Statu" +
+      "s\022\n\n\006ACTIVE\020\000\022\t\n\005STALE\020\001\"_\n\017MessagesRequ" +
+      "est\022#\n\004type\030\001 \002(\0162\025.MessagesRequest.Type",
+      "\022\n\n\002id\030\002 \002(\t\"\033\n\004Type\022\010\n\004USER\020\000\022\t\n\005GROUP\020" +
+      "\001\"}\n\020MessagesResponse\022$\n\004type\030\001 \002(\0162\026.Me" +
+      "ssagesResponse.Type\022\n\n\002id\030\002 \001(\t\022\032\n\010messa" +
+      "ges\030\003 \003(\0132\010.Message\"\033\n\004Type\022\010\n\004USER\020\000\022\t\n" +
+      "\005GROUP\020\001\"\352\002\n\026NetworkDiscoveryPacket\022*\n\004m" +
+      "ode\030\001 \002(\0162\034.NetworkDiscoveryPacket.Mode\022" +
+      "D\n\006sender\030\002 \002(\0162\036.NetworkDiscoveryPacket" +
+      ".Sender:\024INTERNAL_SERVER_NODE\022\020\n\010groupTa" +
+      "g\030\003 \001(\t\022\016\n\006nodeId\030\004 \001(\t\022\023\n\013nodeAddress\030\005" +
+      " \002(\t\022\020\n\010nodePort\030\006 \002(\003\022\016\n\006secret\030\007 \002(\t\"Q",
+      "\n\006Sender\022\030\n\024EXTERNAL_SERVER_NODE\020\000\022\030\n\024IN" +
+      "TERNAL_SERVER_NODE\020\001\022\023\n\017END_USER_CLIENT\020" +
+      "\002\"2\n\004Mode\022\013\n\007REQUEST\020\000\022\014\n\010RESPONSE\020\001\022\017\n\013" +
+      "REMOVE_NODE\020\002\"Y\n\006Header\022\032\n\004type\030\001 \002(\0162\014." +
+      "Header.Type\"3\n\004Type\022\014\n\010INTERNAL\020\000\022\021\n\rINT" +
+      "ER_CLUSTER\020\001\022\n\n\006CLIENT\020\002\"?\n\010Response\022\017\n\007" +
+      "success\030\001 \002(\010\022\017\n\007message\030\002 \001(\t\022\021\n\terrorC" +
+      "ode\030\003 \001(\tB\013\n\007routingH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -10828,7 +10919,7 @@ public final class MsgInterface {
     internal_static_Route_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_Route_descriptor,
-        new java.lang.String[] { "Id", "Path", "NetworkDiscoveryPacket", "User", "Message", "Group", "MessagesRequest", "MessagesResponse", "Header", "Response", "Payload", });
+        new java.lang.String[] { "Id", "Path", "NetworkDiscoveryPacket", "User", "Message", "Group", "MessagesRequest", "MessagesResponse", "Response", "Header", "Payload", });
     internal_static_User_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_User_fieldAccessorTable = new

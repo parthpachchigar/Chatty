@@ -10,7 +10,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.handler.codec.DatagramPacketDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.SocketUtils;
 import routing.MsgInterface.NetworkDiscoveryPacket;
@@ -31,8 +34,8 @@ public final class UdpClient {
         NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
         ndpReq.setMode(Mode.REQUEST);
         ndpReq.setSender(Sender.END_USER_CLIENT);
-        ndpReq.setNodeAddress(State.myConfig.getHost());
-        ndpReq.setNodePort(State.myConfig.getWorkPort());
+        ndpReq.setNodeAddress("10.0.0.31");//State.myConfig.getHost()
+        ndpReq.setNodePort(4167);//State.myConfig.getWorkPort()
         ndpReq.setSecret("secret");
         routebuilder.setNetworkDiscoveryPacket(ndpReq.build());
         Route msg=routebuilder.build();
@@ -46,7 +49,10 @@ public final class UdpClient {
                         @Override
                         public void initChannel(DatagramChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast("protobufDecoder", new DatagramPacketDecoder(new ProtobufDecoder(Route.getDefaultInstance())));
+                            pipeline.addLast("protobufEncoder", new ProtobufEncoder());
                             pipeline.addLast(new UdpClientHandler());
+                            
                         }
                     });
 
@@ -54,7 +60,7 @@ public final class UdpClient {
             Channel ch = b.bind(0).sync().channel();
 
             ByteBuf buf = Unpooled.copiedBuffer(msg.toByteArray());
-
+            
 
             ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress("127.0.0.1", PORT))).sync();
 
@@ -62,7 +68,7 @@ public final class UdpClient {
             // response is received.  If the channel is not closed within 5 seconds,
             // print an error message and quit.
             if (!ch.closeFuture().await(5000)) {
-                System.err.println("request timed out.");
+                System.out.println("request served.");
             }
         } finally {
             group.shutdownGracefully();
