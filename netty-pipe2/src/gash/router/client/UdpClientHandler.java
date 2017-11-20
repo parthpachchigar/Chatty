@@ -15,10 +15,28 @@ public class UdpClientHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("client");
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
-        
-        logger.info(msg.toString());
-        ctx.flush();
+    public void channelRead0(ChannelHandlerContext ctx, Route route) throws Exception {
+        System.out.println("Recieved a datagram packet " + route);
+        System.out.println("***************lets begin test****************");
+        if (route.getNetworkDiscoveryPacket().getMode() == NetworkDiscoveryPacket.Mode.RESPONSE) {
+            String toConnectIP = route.getNetworkDiscoveryPacket().getNodeAddress();
+            int toConnectPort = (int) route.getNetworkDiscoveryPacket().getNodePort();
+            if(null != toConnectIP) {
+                try {
+                    MessageClient mc = new MessageClient(toConnectIP, toConnectPort);
+                    ConnectApp ca = new ConnectApp(mc);
+                    ca.continuePing();
+                    System.out.println("\n** exiting in 10 seconds. **");
+                    System.out.flush();
+                    Thread.sleep(10 * 1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    CommConnection.getInstance().release();
+                }
+            }
+        }
+
     }
 
     @Override
