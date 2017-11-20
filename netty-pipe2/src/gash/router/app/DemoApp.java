@@ -18,6 +18,7 @@ package gash.router.app;
 import gash.router.client.CommConnection;
 import gash.router.client.CommListener;
 import gash.router.client.MessageClient;
+import routing.MsgInterface.Route;
 import routing.Pipe.MessageRoute;
 
 public class DemoApp implements CommListener {
@@ -70,7 +71,7 @@ public class DemoApp implements CommListener {
 		return "demo";
 	}
 
-	public void onMessage(MessageRoute msg) {
+	public void onMessage(Route msg) {
 		System.out.println("---> " + msg);
 	}
 

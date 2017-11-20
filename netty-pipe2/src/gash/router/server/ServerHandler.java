@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import gash.router.container.MessageRoutingConf;
 import gash.router.server.resources.RouteResource;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import routing.MsgInterface.Route;
@@ -71,7 +72,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 					Route reply = rsc.process(msg);
 					System.out.println("---> reply: " + reply);
 					if (reply != null) {
-						channel.write(reply);
+						ChannelFuture cf=channel.writeAndFlush(reply);
+						if (cf.isDone() && !cf.isSuccess()) {
+							logger.error("failed to send message to server - " + msg);
+							
+						}
 					}
 				} catch (Exception e) {
 					// TODO add logging

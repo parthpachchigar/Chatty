@@ -15,6 +15,8 @@
  */
 package gash.router.client;
 
+import routing.MsgInterface.Route;
+import routing.MsgInterface.Route.Path;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -41,10 +43,8 @@ public class MessageClient {
 
 	public void ping() {
 		// construct the message to send
-		MessageRoute.Builder rb = MessageRoute.newBuilder();
-		rb.setId(nextId());
-		rb.setPath("/ping");
-		rb.setPayload("ping");
+		Route.Builder rb = Route.newBuilder();
+	
 
 		try {
 			// direct no queue
@@ -59,11 +59,8 @@ public class MessageClient {
 
 	public void postMessage(String msg) {
 		// construct the message to send
-		MessageRoute.Builder rb = MessageRoute.newBuilder();
-		rb.setId(nextId());
-		rb.setPath("/message");
-		rb.setPayload(msg);
-
+		Route.Builder rb = Route.newBuilder();
+		rb.setPath(Path.PING);
 		try {
 			CommConnection.getInstance().enqueue(rb.build());
 		} catch (Exception e) {

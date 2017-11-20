@@ -3,7 +3,12 @@ package gash.router.server.state;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.server.edge.EdgeDiscoveryHandler;
+import gash.router.server.edge.EdgeInfo;
 import gash.router.server.edge.EdgeMonitor;
+import io.netty.channel.ChannelFuture;
+import routing.MsgInterface.Route;
+import routing.MsgInterface.Route.Path;
 
 public class LeaderState extends State implements Runnable {
     //making it singleton
@@ -68,7 +73,7 @@ public class LeaderState extends State implements Runnable {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					//sendHeartBeat();
+					sendHeartBeat();
 				}
 		    }
 		 };
@@ -113,6 +118,28 @@ public class LeaderState extends State implements Runnable {
 				logger.error("Exception", e);
 			}
 			logger.error("discover successfully stopped.");
+		}
+
+	}
+	public void sendHeartBeat() {
+		for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
+			logger.debug("I have started contacting");
+			System.out.println(ei.isActive());
+			System.out.println(ei.getChannel());
+
+			if (ei.isActive() && ei.getChannel() != null && ei.getRef() != 0) {
+				// Create route message for vote using ping as path
+				Route.Builder voteMessage = Route.newBuilder();
+				voteMessage.setId(111);
+				voteMessage.setPath(Path.HEADER);
+
+				Route vote = voteMessage.build();
+				logger.debug("Sent heartbeatRPC to " + ei.getRef());
+				ChannelFuture cf = ei.getChannel().writeAndFlush(vote);
+				if (cf.isDone() && !cf.isSuccess()) {
+					logger.debug("failed to send message (VoteRequest) to server");
+				}
+			}
 		}
 
 	}

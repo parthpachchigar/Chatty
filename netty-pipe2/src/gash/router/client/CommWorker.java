@@ -1,6 +1,7 @@
 package gash.router.client;
 
 import io.netty.channel.Channel;
+import routing.MsgInterface.Route;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -39,7 +40,7 @@ public class CommWorker extends Thread {
 			try {
 				// block until a message is enqueued AND the outgoing
 				// channel is active
-				MessageRoute msg = conn.outbound.take();
+				Route msg = conn.outbound.take();
 				if (ch.isWritable()) {
 					if (!conn.write(msg)) {
 						conn.outbound.putFirst(msg);

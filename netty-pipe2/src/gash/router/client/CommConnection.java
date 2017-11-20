@@ -30,6 +30,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import routing.MsgInterface.Route;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -51,7 +52,7 @@ public class CommConnection {
 	private EventLoopGroup group;
 
 	// our surge protection using a in-memory cache for messages
-	LinkedBlockingDeque<MessageRoute> outbound;
+	LinkedBlockingDeque<Route> outbound;
 
 	// message processing is delegated to a threading model
 	private CommWorker worker;
@@ -99,7 +100,7 @@ public class CommConnection {
 	 * @exception An
 	 *                exception is raised if the message cannot be enqueued.
 	 */
-	public void enqueue(MessageRoute req) throws Exception {
+	public void enqueue(Route req) throws Exception {
 		// enqueue message
 		outbound.put(req);
 	}
@@ -114,7 +115,7 @@ public class CommConnection {
 	 * @param msg
 	 * @return
 	 */
-	public boolean write(MessageRoute msg) {
+	public boolean write(Route msg) {
 		if (msg == null)
 			return false;
 		else if (channel == null)
@@ -124,7 +125,7 @@ public class CommConnection {
 		// connection. For the demonstration, we don't need it
 		ChannelFuture cf = connect().writeAndFlush(msg);
 		if (cf.isDone() && !cf.isSuccess()) {
-			logger.error("failed to send message to server - " + msg.getPayload());
+			logger.error("failed to send message to server - " + msg);
 			return false;
 		}
 
@@ -146,7 +147,7 @@ public class CommConnection {
 		System.out.println("--> initializing connection to " + host + ":" + port);
 
 		// the queue to support client-side surging
-		outbound = new LinkedBlockingDeque<MessageRoute>();
+		outbound = new LinkedBlockingDeque<Route>();
 
 		group = new NioEventLoopGroup();
 		try {
