@@ -49,8 +49,4 @@ public final class UdpServer implements Runnable{
         }
 
 	}
-    public static void main(String[]args){
-        Thread discoveryThread = new Thread(new UdpServer());
-        discoveryThread.start();
-    }
 }

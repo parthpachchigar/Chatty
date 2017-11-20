@@ -1,9 +1,13 @@
 import java.sql.ResultSetMetaData;
 
 import org.junit.Test;
+<<<<<<< HEAD
 
 import gash.router.database.DatabaseClient;
 import gash.router.database.DatabaseService;
+=======
+import gash.router.database.*;
+>>>>>>> 4bc7ca29c6869e3b62f493be18782981218d5201
 
 public class dbTest {
 
