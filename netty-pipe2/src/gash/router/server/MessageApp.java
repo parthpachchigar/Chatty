@@ -29,7 +29,7 @@ public class MessageApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		State.setStatus(State.Status.FOLLOWER);
+		
 		
 		
 		

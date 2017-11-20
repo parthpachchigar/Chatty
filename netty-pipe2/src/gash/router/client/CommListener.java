@@ -15,6 +15,7 @@
  */
 package gash.router.client;
 
+import routing.MsgInterface.Route;
 import routing.Pipe.MessageRoute;
 
 public interface CommListener {
@@ -32,5 +33,5 @@ public interface CommListener {
 	 *            Both requests and responses are held in the same message
 	 *            structure
 	 */
-	void onMessage(MessageRoute msg);
+	void onMessage(Route msg);
 }

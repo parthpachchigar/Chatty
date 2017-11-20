@@ -24,8 +24,10 @@ import org.slf4j.LoggerFactory;
 import gash.router.container.MessageRoutingConf;
 import gash.router.server.resources.RouteResource;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import routing.MsgInterface.Route;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -36,7 +38,7 @@ import routing.Pipe.MessageRoute;
  * @author gash
  * 
  */
-public class ServerHandler extends SimpleChannelInboundHandler<MessageRoute> {
+public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("connect");
 
 	private HashMap<String, String> routing;
@@ -53,36 +55,36 @@ public class ServerHandler extends SimpleChannelInboundHandler<MessageRoute> {
 	 * 
 	 * @param msg
 	 */
-	public void handleMessage(MessageRoute msg, Channel channel) {
+	public void handleMessage(Route msg, Channel channel) {
 		if (msg == null) {
 			// TODO add logging
 			System.out.println("ERROR: Unexpected content - " + msg);
 			return;
 		}
 
-		System.out.println("---> " + msg.getId() + ": " + msg.getPath() + ", " + msg.getPayload());
+		System.out.println("---> " + msg.getId() + ": " + msg.getPath().name() );
 
 		try {
-			String clazz = routing.get(msg.getPath().toLowerCase());
+			String clazz = routing.get("/"+msg.getPath().name().toLowerCase());
 			if (clazz != null) {
 				RouteResource rsc = (RouteResource) Beans.instantiate(RouteResource.class.getClassLoader(), clazz);
 				try {
-					String reply = rsc.process(msg.getPayload());
+					Route reply = rsc.process(msg);
 					System.out.println("---> reply: " + reply);
 					if (reply != null) {
-						MessageRoute.Builder rb = MessageRoute.newBuilder(msg);
-						rb.setPayload(reply);
-						channel.write(rb.build());
+						ChannelFuture cf=channel.writeAndFlush(reply);
+						if (cf.isDone() && !cf.isSuccess()) {
+							logger.error("failed to send message to server - " + msg);
+							
+						}
 					}
 				} catch (Exception e) {
 					// TODO add logging
-					MessageRoute.Builder rb = MessageRoute.newBuilder(msg);
-					rb.setPayload("Error: " + e.getMessage());
-					channel.write(rb.build());
+					
 				}
 			} else {
 				// TODO add logging
-				System.out.println("ERROR: unknown path - " + msg.getPath());
+				System.out.println("ERROR: unknown path - " + msg.getPath().name().toLowerCase());
 			}
 		} catch (Exception ex) {
 			// TODO add logging
@@ -103,7 +105,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<MessageRoute> {
 	 *            The message
 	 */
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, MessageRoute msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
 		System.out.println("------------");
 		handleMessage(msg, ctx.channel());
 	}

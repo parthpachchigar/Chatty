@@ -132,7 +132,7 @@ public class EdgeMonitor {
 
 	
 
-	public class DiscoverTask extends TimerTask {
+	class DiscoverTask extends TimerTask {
 		public DiscoverTask() {
 			
 		}
@@ -143,7 +143,7 @@ public class EdgeMonitor {
 		}
 	}
 
-	public class DisplayEdgeTask extends TimerTask {
+	class DisplayEdgeTask extends TimerTask {
 
 		@Override
 		public void run() {
