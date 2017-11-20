@@ -16,10 +16,7 @@ public final class UdpServer implements Runnable{
     private static final int PORT = Integer.parseInt(System.getProperty("port", "8888"));
     static AttributeKey<String> attkey = AttributeKey.valueOf("clientid");
 
-    public static void main(String[] args) throws Exception {
-    	Thread t=new Thread(new UdpServer());
-    	t.start();
-    }
+   
 
 	@Override
 	public void run() {
@@ -52,8 +49,4 @@ public final class UdpServer implements Runnable{
         }
 
 	}
-    public static void main(String[]args){
-        Thread discoveryThread = new Thread(new UdpServer());
-        discoveryThread.start();
-    }
 }
