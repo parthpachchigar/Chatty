@@ -4,6 +4,7 @@ import gash.router.container.RoutingConf;
 import gash.router.server.edge.EdgeList;
 
 public class State {
+	
 	public enum Status{
 		FOLLOWER,
 		CANDIDATE,
@@ -12,8 +13,8 @@ public class State {
 	private static Status currentState;
 	public static RoutingConf myConfig;
 	public static State state;
-	
-	
+	public static String leaderaddress;
+	public static long leaderport;
 	public static Status getStatus() {
 		return currentState;
 	}

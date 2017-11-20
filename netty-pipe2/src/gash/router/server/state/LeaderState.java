@@ -7,6 +7,8 @@ import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.edge.EdgeMonitor;
 import io.netty.channel.ChannelFuture;
+import routing.MsgInterface.NetworkDiscoveryPacket;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
 import routing.MsgInterface.Route;
 import routing.MsgInterface.Route.Path;
 
@@ -132,7 +134,11 @@ public class LeaderState extends State implements Runnable {
 				Route.Builder voteMessage = Route.newBuilder();
 				voteMessage.setId(111);
 				voteMessage.setPath(Path.HEADER);
-
+				NetworkDiscoveryPacket.Builder ndp = NetworkDiscoveryPacket.newBuilder();
+				ndp.setNodeAddress(State.myConfig.getHost());
+				ndp.setNodePort(State.myConfig.getWorkPort());
+				ndp.setMode(Mode.REQUEST);
+				voteMessage.setNetworkDiscoveryPacket(ndp.build());
 				Route vote = voteMessage.build();
 				logger.debug("Sent heartbeatRPC to " + ei.getRef());
 				ChannelFuture cf = ei.getChannel().writeAndFlush(vote);

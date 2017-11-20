@@ -19,7 +19,9 @@ public class HeaderResource implements RouteResource {
 	@Override
 	public Route process(Route body) {
 		//logger.info(body.toString());
-		FollowerState.timeout=State.myConfig.getHeartbeatDt();
+		FollowerState.getInstance().onReceivingHeartBeatPacket();
+		State.leaderaddress=body.getNetworkDiscoveryPacket().getNodeAddress();
+		State.leaderport=body.getNetworkDiscoveryPacket().getNodePort();
 		return null;
 	}
 
