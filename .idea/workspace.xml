@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cd1c8539-c1b8-4927-9fbc-0ba499204231" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/netty-pipe2/src/gash/router/client/UdpClient.java" afterPath="$PROJECT_DIR$/netty-pipe2/src/gash/router/client/UdpClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/netty-pipe2/src/gash/router/client/UdpClientHandler.java" afterPath="$PROJECT_DIR$/netty-pipe2/src/gash/router/client/UdpClientHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/netty-pipe2/src/gash/router/server/UdpServer.java" afterPath="$PROJECT_DIR$/netty-pipe2/src/gash/router/server/UdpServer.java" />
-    </list>
+    <list default="true" id="cd1c8539-c1b8-4927-9fbc-0ba499204231" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
