@@ -26,9 +26,8 @@ public class MigrationsPostgreSQL {
     public String createGroupTable(){
         StringBuilder sql = new StringBuilder();
         return sql.append("CREATE TABLE groups ( " +
-                " id             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('group_seq'::regclass))::text)),\n" +
+                " gid             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('group_seq'::regclass))::text)),\n" +
                 " gname          varchar NOT NULL, " +
-                " username       varchar,\n" +
                 " created        TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
                 " archived       TIMESTAMP\n" +
                 ");").toString();
@@ -47,8 +46,10 @@ public class MigrationsPostgreSQL {
         StringBuilder sql = new StringBuilder();
         return sql.append("CREATE TABLE users ( " +
                 " id             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('user_seq'::regclass))::text)),\n" +
-                " gname          varchar NOT NULL, " +
+                " email          varchar NOT NULL, " +
+                " password          varchar NOT NULL, " +
                 " username       varchar,\n" +
+                " recentActiveTime TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
                 " created        TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
                 " archived       TIMESTAMP\n" +
                 ");").toString();

@@ -7,10 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 public class PostgreSQL implements DatabaseClient {
 	Connection conn = null;
@@ -32,12 +29,12 @@ public class PostgreSQL implements DatabaseClient {
 	@Override
 	public byte[] get(String key) {
 		Statement stmt = null;
-		byte[] image=null; 
+		byte[] image=null;
 		System.out.println(key);
 		try {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("Select image FROM testtable WHERE \"key\" LIKE '"+key+"'");
-			
+
 			while (rs.next()) {
 				image=rs.getBytes(1);
 			}
@@ -46,9 +43,9 @@ public class PostgreSQL implements DatabaseClient {
 			e.printStackTrace();
 		} finally {
 		}
-		return image;		
+		return image;
 	}
-	
+
 	@Override
 	public List<Record> getNewEntries(long staleTimestamp) {
 		Statement stmt = null;
@@ -56,7 +53,7 @@ public class PostgreSQL implements DatabaseClient {
 		try {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("Select key, image, timestamp FROM testtable where timestamp > " + staleTimestamp);
-			
+
 			while (rs.next()) {
 				list.add(new Record(rs.getString(1), rs.getBytes(2), rs.getLong(3)));
 			}
@@ -65,7 +62,7 @@ public class PostgreSQL implements DatabaseClient {
 			e.printStackTrace();
 		} finally {
 		}
-		return list;		
+		return list;
 	}
 
 
@@ -76,7 +73,7 @@ public class PostgreSQL implements DatabaseClient {
 		try {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("Select key, image, timestamp FROM testtable");
-			
+
 			while (rs.next()) {
 				list.add(new Record(rs.getString(1), rs.getBytes(2), rs.getLong(3)));
 			}
@@ -85,18 +82,18 @@ public class PostgreSQL implements DatabaseClient {
 			e.printStackTrace();
 		} finally {
 		}
-		return list;		
+		return list;
 	}
 
-	
+
 	@Override
 	public long getCurrentTimeStamp() {
 		Statement stmt = null;
-		long timestamp = 0; 
+		long timestamp = 0;
 		try {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("Select max(timestamp) FROM testtable");
-			
+
 			while (rs.next()) {
 				timestamp = rs.getLong(1);
 			}
@@ -105,10 +102,10 @@ public class PostgreSQL implements DatabaseClient {
 			e.printStackTrace();
 		} finally {
 		}
-		return timestamp;		
+		return timestamp;
 	}
 
-	
+
 	@Override
 	public String post(byte[] image, long timestamp){
 		String key = UUID.randomUUID().toString();
@@ -119,9 +116,9 @@ public class PostgreSQL implements DatabaseClient {
 			ps.setBytes(2, image);
 			ps.setLong(3, timestamp);
 			ResultSet set = ps.executeQuery();
-			
+
 		} catch (SQLException e) {
-			
+
 		} finally {
 			try {
 				if (ps != null)
@@ -130,11 +127,11 @@ public class PostgreSQL implements DatabaseClient {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return key;
 	}
 
-	
+
 	@Override
 	public void post(String key, byte[] image, long timestamp){
 		PreparedStatement ps = null;
@@ -144,7 +141,7 @@ public class PostgreSQL implements DatabaseClient {
 			ps.setBytes(2, image);
 			ps.setLong(3, timestamp);
 			ResultSet set = ps.executeQuery();
-			
+
 		} catch (SQLException e) {
 		} finally {
 			try {
@@ -157,7 +154,7 @@ public class PostgreSQL implements DatabaseClient {
 	}
 
 	@Override
-	public void put(String key, byte[] image, long timestamp){		
+	public void put(String key, byte[] image, long timestamp){
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement("UPDATE testtable SET image= ? , timestamp = ?  WHERE key LIKE ?");
@@ -165,7 +162,7 @@ public class PostgreSQL implements DatabaseClient {
 			ps.setLong(2, timestamp);
 			ps.setString(3, key);
 			ResultSet set = ps.executeQuery();
-			
+
 		} catch (SQLException e) {
 		} finally {
 			try {
@@ -177,16 +174,16 @@ public class PostgreSQL implements DatabaseClient {
 		}
 	}
 
-	
-	
+
+
 	@Override
-	public void putEntries(List<Record> list){		
-			for (Record record : list) {
-				put(record.getKey(), record.getImage(), record.getTimestamp());
-			}
+	public void putEntries(List<Record> list){
+		for (Record record : list) {
+			put(record.getKey(), record.getImage(), record.getTimestamp());
+		}
 	}
 
-	
+
 	@Override
 	public void delete(String key){
 		Statement stmt = null;
@@ -195,7 +192,7 @@ public class PostgreSQL implements DatabaseClient {
 			StringBuilder sql = new StringBuilder();
 			sql.append("DELETE FROM messages WHERE key LIKE '"+key+"';");
 			stmt.executeUpdate(sql.toString());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -220,6 +217,24 @@ public class PostgreSQL implements DatabaseClient {
 		}
 
 		return rsmd;
+	}
+	@Override
+	public List getMessages(String fromId, String destId) {
+		List list = null;
+		Statement stmt = null;
+		System.out.println("getMessage: " + fromId);
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("Select * FROM messages WHERE \"from_id\" ='"+fromId+"';") ;
+			list = resultSetToArrayList(rs);
+			rs.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+		}
+
+		return list;
 	}
 	@Override
 	public void postMessage(String message, String toId,String fromId){
@@ -252,11 +267,31 @@ public class PostgreSQL implements DatabaseClient {
 			stmt.executeUpdate(migrationSql.seqMessageTable());
 			stmt.executeUpdate(migrationSql.createMessageTable());
 
+			stmt.executeUpdate(migrationSql.seqGroupTable());
+			stmt.executeUpdate(migrationSql.createGroupTable());
+
+			stmt.executeUpdate(migrationSql.seqUserTable());
+			stmt.executeUpdate(migrationSql.createUserTable());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			// initiate new everytime
 		}
+	}
+	public List<HashMap> resultSetToArrayList(ResultSet rs) throws SQLException {
+		ResultSetMetaData md = rs.getMetaData();
+		int columns = md.getColumnCount();
+		ArrayList list = new ArrayList();
+		while (rs.next()){
+			HashMap row = new HashMap(columns);
+			for(int i=1; i<=columns; ++i){
+				row.put(md.getColumnName(i),rs.getObject(i));
+			}
+			list.add(row);
+		}
+
+		return list;
 	}
 
 }
