@@ -29,7 +29,7 @@ public class MessageApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String pathname = "resources/route-1.conf";
+		String pathname = "resources/route-3.conf";
 		if (args.length == 0) {
 			System.out.println("usage: server" + pathname);
 		} else {

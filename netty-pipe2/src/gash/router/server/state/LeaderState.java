@@ -14,6 +14,11 @@ import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
 import routing.MsgInterface.Route;
 import routing.MsgInterface.Route.Path;
 
+import java.util.List;
+
+import static gash.router.server.state.ServerMessageUtils.prepareMessagesResponseBuilder;
+
+
 public class LeaderState extends State implements Runnable {
     //making it singleton
 	public static Logger logger=LoggerFactory.getLogger("server");
@@ -156,13 +161,22 @@ public class LeaderState extends State implements Runnable {
 	public void handleMessageEntries(Route msg) {
 		MsgInterface.Message message = msg.getMessage();
 		MsgInterface.Message.ActionType type = message.getAction();
-		if (type == MsgInterface.Message.ActionType.POST) {
+		String senderId = message.getSenderId().toString();
+		String destId = message.getSenderId().toString();
+		if( msg.hasMessagesRequest() ){
 			DatabaseService.getInstance().getDb().postMessage(message.getPayload(), message.getReceiverId(),message.getSenderId());
-		//call replication
-		} else if (type == MsgInterface.Message.ActionType.UPDATE) {
+			List messageList = DatabaseService.getInstance().getDb().getMessages(senderId,destId);
+			Route route = prepareMessagesResponseBuilder(senderId,destId, messageList);
+			System.out.println("getMessages: " + messageList);
+		} else {
+			if (type == MsgInterface.Message.ActionType.POST) {
 
-		} else if (type == MsgInterface.Message.ActionType.DELETE) {
+				//call replication
+			} else if (type == MsgInterface.Message.ActionType.UPDATE) {
 
+			} else if (type == MsgInterface.Message.ActionType.DELETE) {
+
+			}
 		}
 	}
 	

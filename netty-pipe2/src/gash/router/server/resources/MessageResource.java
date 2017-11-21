@@ -59,7 +59,7 @@ public class MessageResource implements RouteResource {
 
 				}
 			}
-		}else if(State.getStatus() == State.Status.LEADER){
+		} else if(State.getStatus() == State.Status.LEADER){
 			State.getState().handleMessageEntries(body);
 		}
 		return body;
