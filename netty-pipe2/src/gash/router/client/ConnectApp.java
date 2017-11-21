@@ -64,8 +64,11 @@ public class ConnectApp implements CommListener {
 				System.out.print("destination_id: ");
 			} else if(destination_id == null){
 				destination_id = line;
+				System.out.print("message: ");
 			} else {
 				mc.sendMessage(sendMessage(line));
+				Thread.sleep(1 * 1000);
+				System.out.print("message: ");
 			}
 		}
 	}
@@ -77,6 +80,7 @@ public class ConnectApp implements CommListener {
 
 	@Override
 	public void onMessage(Route msg) {
+		System.out.println("--> got incoming message" + msg.toString());
 		// TODO Auto-generated method stub
 		
 	}
