@@ -52,6 +52,34 @@ public class ConnectApp implements CommListener {
 		route.setMessage(msg);
 		return route.build();
 	}
+	public void pingMessage(int N, String line) {
+		final int maxN = 10;
+		long[] dt = new long[N];
+		long st = System.currentTimeMillis(), ft = 0;
+		for (int n = 0; n < N; n++) {
+			mc.sendMessage(sendMessage(line + " : " + n ));
+			ft = System.currentTimeMillis();
+			dt[n] = ft - st;
+			st = ft;
+		}
+	}
+	public void pingMessageWithUsers(String line) {
+		final int n = 2000;
+		pingMessage(n, line);
+
+		uname = uname + "1";
+		pingMessage(n, line);
+
+		uname = uname + "2";
+		pingMessage(n, line);
+
+		uname = uname + "3";
+		pingMessage(n, line);
+
+		uname = uname + "4";
+		pingMessage(n, line);
+
+	}
 	public void continuePing() throws Exception {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Username: ");
@@ -67,6 +95,7 @@ public class ConnectApp implements CommListener {
 				System.out.print("message: ");
 			} else {
 				mc.sendMessage(sendMessage(line));
+				//pingMessageWithUsers(line);
 				Thread.sleep(1 * 1000);
 				System.out.print("message: ");
 			}
