@@ -28,7 +28,7 @@ public final class UdpClient {
 
     public static void main(String[] args) throws Exception {
 
-        Route.Builder routebuilder=Route.newBuilder();
+        Route.Builder routebuilder = Route.newBuilder();
         routebuilder.setId(999);
         routebuilder.setPath(Path.NETWORK_DISCOVERY);
         NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();

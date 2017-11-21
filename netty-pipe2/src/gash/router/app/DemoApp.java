@@ -72,7 +72,7 @@ public class DemoApp implements CommListener {
 	}
 
 	public void onMessage(Route msg) {
-		System.out.println("---> " + msg);
+		System.out.println("onMessage: ---> " + msg);
 	}
 
 	/**
