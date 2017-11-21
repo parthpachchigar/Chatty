@@ -63,7 +63,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 		}
 
 		System.out.println("---> " + msg.getId() + ": " + msg.getPath().name() );
-
+		System.out.println("------------");
 		try {
 			String clazz = routing.get("/" + msg.getPath().name().toLowerCase());
 			if (clazz != null) {
