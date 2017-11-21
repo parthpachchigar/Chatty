@@ -41,11 +41,12 @@ public class PingResource implements RouteResource {
 		Route reply = null;
 		logger.info(body.toString());
 		if (!reply.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
-			if (State.getStatus() == State.Status.CANDIDATE) {
+			if (Integer.parseInt(reply.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
 				State.setStatus(State.Status.FOLLOWER);
 
 			}
 		}
+		
 		reply = body;
 
 		return reply;
