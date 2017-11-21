@@ -20,7 +20,11 @@ import org.slf4j.LoggerFactory;
 
 import gash.router.server.state.CandidateState;
 import gash.router.server.state.State;
+import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
+import routing.MsgInterface.Route.Path;
 
 /**
  * responds to request for pinging the service
@@ -38,18 +42,33 @@ public class PingResource implements RouteResource {
 
 	@Override
 	public Route process(Route body) {
-		Route reply = null;
+		Route.Builder voteMessage = Route.newBuilder();
+		voteMessage.setId(112);
+		voteMessage.setPath(Path.PING);
+		NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
+        ndpReq.setMode(Mode.RESPONSE);
+        ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
+        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
+        ndpReq.setNodeId(""+State.myConfig.getNodeId());
+        
+        ndpReq.setSecret("secret");
+        voteMessage.setNetworkDiscoveryPacket(ndpReq.build());
+		Route voteResponse = voteMessage.build();
 		logger.info(body.toString());
-		if (!reply.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
-			if (Integer.parseInt(reply.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
+		if (!body.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
+			if (Integer.parseInt(body.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
 				State.setStatus(State.Status.FOLLOWER);
+				voteResponse=null;
 
 			}
 		}
+		System.out.println(body);
+		System.out.println(voteResponse);
 		
-		reply = body;
+		
 
-		return reply;
+		return voteResponse;
 	}
 
 }

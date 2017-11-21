@@ -17,10 +17,11 @@ public final class UdpServer implements Runnable{
     static AttributeKey<String> attkey = AttributeKey.valueOf("clientid");
 
    
-
+    
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+	
 		EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -48,5 +49,10 @@ public final class UdpServer implements Runnable{
             group.shutdownGracefully();
         }
 
+	}
+	public static void main(String a[]) {
+		Thread discoveryThread = new Thread(new UdpServer());
+		discoveryThread.start();
+		
 	}
 }

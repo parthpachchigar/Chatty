@@ -119,9 +119,8 @@ public class CandidateState extends State implements Runnable {
 			public void run() {
 				
 				while (running) {
-					System.out.println("In decision");
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -152,7 +151,7 @@ public class CandidateState extends State implements Runnable {
 
 				logger.debug("Total number of responses = " + TotalResponses);
 
-				if ((TotalResponses) > (EdgeInfo.availableNodes.size() + 1) / 2) {
+				if ((TotalResponses) >= numberOfYESResponses) {
 					return Boolean.TRUE;
 				}
 				return Boolean.FALSE;

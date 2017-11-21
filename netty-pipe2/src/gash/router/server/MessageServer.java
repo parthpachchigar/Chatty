@@ -140,8 +140,6 @@ public class MessageServer {
 		}
 		logger.info("Node id is "+State.myConfig.getNodeId());
 		
-		Thread discoveryThread = new Thread(new UdpServer());
-		discoveryThread.start();
 		State.setStatus(State.Status.FOLLOWER);
 		//StateMachine.running=false;
 		//new Thread(new StateMachine()).start();

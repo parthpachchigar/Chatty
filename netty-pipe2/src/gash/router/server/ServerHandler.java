@@ -23,11 +23,16 @@ import org.slf4j.LoggerFactory;
 
 import gash.router.container.MessageRoutingConf;
 import gash.router.server.resources.RouteResource;
+import gash.router.server.state.State;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
+import routing.MsgInterface.Route.Path;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -61,7 +66,38 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 			System.out.println("ERROR: Unexpected content - " + msg);
 			return;
 		}
+		if(msg.getPath()==Path.PING) {
+			Route.Builder voteMessage = Route.newBuilder();
+			voteMessage.setId(112);
+			voteMessage.setPath(Path.PING);
+			NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
+	        ndpReq.setMode(Mode.RESPONSE);
+	        ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
+	        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+	        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
+	        ndpReq.setNodeId(""+State.myConfig.getNodeId());
+	        
+	        ndpReq.setSecret("secret");
+	        voteMessage.setNetworkDiscoveryPacket(ndpReq.build());
+			Route voteResponse = voteMessage.build();
+			logger.info(msg.toString());
+			if (!msg.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
+				if (Integer.parseInt(msg.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
+					State.setStatus(State.Status.FOLLOWER);
+					voteResponse=null;
 
+				}
+			}
+			System.out.println(msg);
+			System.out.println(voteResponse);
+			if (voteResponse != null) {
+				ChannelFuture cf=channel.writeAndFlush(voteResponse);
+				if (cf.isDone() && !cf.isSuccess()) {
+					logger.error("failed to send message to server - " + msg);
+					
+				}
+			}
+		}
 		System.out.println("---> " + msg.getId() + ": " + msg.getPath().name() );
 
 		try {
