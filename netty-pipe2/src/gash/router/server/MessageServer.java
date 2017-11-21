@@ -48,7 +48,7 @@ public class MessageServer {
 	public static final String sPort = "port";
 	public static final String sPoolSize = "pool.size";
 
-	protected MessageRoutingConf conf;
+	public static MessageRoutingConf conf;
 	protected RoutingConf conf2;
 	protected boolean background = false;
 

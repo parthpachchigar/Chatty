@@ -71,7 +71,7 @@ public class LeaderState extends State implements Runnable {
 		    public void run(){
 				while (running) {
 					try {
-						Thread.sleep(gash.router.server.state.State.myConfig.getHeartbeatDt());
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.server.MessageServer;
 import gash.router.server.ServerInit;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
