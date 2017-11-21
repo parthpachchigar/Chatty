@@ -2,6 +2,7 @@ package gash.router.server.state;
 
 import gash.router.container.RoutingConf;
 import gash.router.server.edge.EdgeList;
+import routing.MsgInterface.Route;
 
 public class State {
 	
@@ -78,7 +79,14 @@ public class State {
 
 	public void stopService() {
 	}
-
+   
+	public void handleMessageEntries(Route msg){}
+	public static State getState() {
+		return state;
+	}
+	public static void setState(State state) {
+		State.state = state;
+	}
 	
 	
 }
