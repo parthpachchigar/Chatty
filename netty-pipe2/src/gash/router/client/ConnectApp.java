@@ -37,12 +37,7 @@ public class ConnectApp implements CommListener {
 	}
 	
 	Message.Builder msg = Message.newBuilder();
-	/*public void ping(int N) {
-		
-		for (int n = 0; n < N; n++) {
-			mc.postMessage("hello server ;) " + n);
-		}
-	}*/
+
 	public Route sendMessage(String message){
 		msg.setType(Message.Type.SINGLE);
 		msg.setSenderId(uname);
@@ -64,18 +59,14 @@ public class ConnectApp implements CommListener {
 			String line = in.readLine();
 			if (line == null) {
 				break;
-			}
-			if(uname == null){
+			} else if(uname == null){
 				uname = line;
 				System.out.print("destination_id: ");
-			}
-			if(destination_id == null){
+			} else if(destination_id == null){
 				destination_id = line;
+			} else {
+				mc.sendMessage(sendMessage(line));
 			}
-
-
-			mc.sendMessage(sendMessage(line));
-
 		}
 	}
 

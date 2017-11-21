@@ -26,10 +26,11 @@ public class UdpClientHandler extends SimpleChannelInboundHandler<Route> {
                 try {
                     MessageClient mc = new MessageClient(toConnectIP, toConnectPort);
                     ConnectApp ca = new ConnectApp(mc);
+                    Thread.sleep(6 * 1000);
                     ca.continuePing();
                     System.out.println("\n** exiting in 10 seconds. **");
                     System.out.flush();
-                    Thread.sleep(10 * 1000);
+                    Thread.sleep(4 * 1000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
