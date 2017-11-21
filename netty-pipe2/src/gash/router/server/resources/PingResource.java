@@ -40,6 +40,10 @@ public class PingResource implements RouteResource {
 	public Route process(Route body) {
 		Route reply=null;
 		logger.info(body.toString());
+		if(State.getStatus()==State.Status.CANDIDATE) {
+			State.setStatus(State.Status.FOLLOWER);
+			
+		}
 		reply=body;
 		
 		return reply;

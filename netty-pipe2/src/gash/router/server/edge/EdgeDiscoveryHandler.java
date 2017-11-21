@@ -66,9 +66,8 @@ public class EdgeDiscoveryHandler extends SimpleChannelInboundHandler<Route> {
 				logger.info("Before init");
 				//outbound.addNode(Integer.parseInt(nodeId), host, port);
 				init(outbound.addNode(Integer.parseInt(nodeId), host, port));
-				if(State.myConfig.getRouting().contains(new gash.router.container.RoutingConf.RoutingEntry(Integer.parseInt(nodeId), host, (int)port) )) {
-					EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
-				}
+				EdgeInfo.availableNodes.add(Integer.parseInt(nodeId));
+			
 			}
 			// Create Connection to host and port and write task to the channel
 			
