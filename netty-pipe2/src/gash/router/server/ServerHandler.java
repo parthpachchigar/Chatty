@@ -65,7 +65,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 		System.out.println("---> " + msg.getId() + ": " + msg.getPath().name() );
 
 		try {
-			String clazz = routing.get("/"+msg.getPath().name().toLowerCase());
+			String clazz = routing.get("/" + msg.getPath().name().toLowerCase());
 			if (clazz != null) {
 				RouteResource rsc = (RouteResource) Beans.instantiate(RouteResource.class.getClassLoader(), clazz);
 				try {

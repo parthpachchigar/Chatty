@@ -20,8 +20,9 @@ public class CandidateState extends State implements Runnable {
 	private int TotalResponses;
 	Timer timer = new Timer();
 	Timer timer2 = new Timer();
-	Thread discover=null;
-	Thread display=null;
+	Thread discover = null;
+	Thread display = null;
+
 	private CandidateState() {
 		// TODO Auto-generated constructor stub
 	}
@@ -37,10 +38,10 @@ public class CandidateState extends State implements Runnable {
 	public void run() {
 
 		logger.info("-----------------------CANDIDATE SERVICE STARTED ----------------------------");
-		discover=new Thread() {
+		discover = new Thread() {
 			@Override
 			public void run() {
-				while(running) {
+				while (running) {
 					EdgeMonitor.discoverEdges();
 					try {
 						Thread.sleep(5000);
@@ -52,11 +53,12 @@ public class CandidateState extends State implements Runnable {
 			}
 		};
 		discover.start();
-		display=new Thread() {
+		display = new Thread() {
 			@Override
 			public void run() {
-				while(running) {
-					EdgeMonitor.displayEdgeStatus();;
+				while (running) {
+					EdgeMonitor.displayEdgeStatus();
+					;
 					try {
 						Thread.sleep(4000);
 					} catch (InterruptedException e) {
@@ -82,6 +84,7 @@ public class CandidateState extends State implements Runnable {
 		TotalResponses = 0;
 
 		for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
+
 			logger.debug("I have started contacting");
 			System.out.println(ei.isActive());
 			System.out.println(ei.getChannel());
@@ -103,24 +106,34 @@ public class CandidateState extends State implements Runnable {
 		new Thread() {
 			@Override
 			public void run() {
-				System.out.println("In decision");
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println("In decision2");
-				if (isWinner()) {
-					System.out.println("In winner");
-					logger.info(gash.router.server.state.State.myConfig.getNodeId() + " has won the election.");
-					gash.router.server.state.State.setStatus(gash.router.server.state.State.Status.LEADER);
+				
+				while (running) {
+					System.out.println("In decision");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (EdgeInfo.availableNodes.size() > gash.router.server.state.State.myConfig.getRouting().size()) {
+						numberOfYESResponses = (gash.router.server.state.State.myConfig.getRouting().size() + 1) / 2;
+					} else {
+						numberOfYESResponses = (EdgeInfo.availableNodes.size() + 1) / 2;
+					}
+					if (TotalResponses >= numberOfYESResponses) {
+						if (isWinner()) {
+							System.out.println("In winner");
+							logger.info(gash.router.server.state.State.myConfig.getNodeId() + " has won the election.");
+							gash.router.server.state.State.setStatus(gash.router.server.state.State.Status.LEADER);
 
-				} else {
-					System.out.println("In looser");
-					logger.info(gash.router.server.state.State.myConfig.getNodeId() + " has lost the election.");
-					gash.router.server.state.State.setStatus(gash.router.server.state.State.Status.FOLLOWER);
+						} else {
+							System.out.println("In looser");
+							logger.info(
+									gash.router.server.state.State.myConfig.getNodeId() + " has lost the election.");
+							gash.router.server.state.State.setStatus(gash.router.server.state.State.Status.FOLLOWER);
 
+						}
+					}
 				}
 			}
 
@@ -148,7 +161,7 @@ public class CandidateState extends State implements Runnable {
 	}
 
 	public void stopService() {
-		
+
 		running = Boolean.FALSE;
 		if (cthread != null) {
 			try {
