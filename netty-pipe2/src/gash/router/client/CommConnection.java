@@ -15,9 +15,15 @@
  */
 package gash.router.client;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
 
+import gash.router.container.MessageRoutingConf;
+import gash.router.server.MessageServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +49,7 @@ public class CommConnection {
 	protected static Logger logger = LoggerFactory.getLogger("connect");
 
 	protected static AtomicReference<CommConnection> instance = new AtomicReference<CommConnection>();
+	MessageRoutingConf conf;
 
 	private String host;
 	private int port;
@@ -150,8 +157,20 @@ public class CommConnection {
 		outbound = new LinkedBlockingDeque<Route>();
 
 		group = new NioEventLoopGroup();
+		File routeconf = new File("resources/routing.conf");
+		BufferedInputStream br = null;
 		try {
-			ServerInit si = new ServerInit(null, false);
+			byte[] raw = new byte[(int) routeconf.length()];
+			br = new BufferedInputStream(new FileInputStream(routeconf));
+			br.read(raw);
+			conf = MessageServer.JsonUtil.decode(new String(raw), MessageRoutingConf.class);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("verification of configuration failed");
+
+		}
+		try {
+			ServerInit si = new ServerInit(conf, false);
 			Bootstrap b = new Bootstrap();
 			b.group(group).channel(NioSocketChannel.class).handler(si);
 			b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
