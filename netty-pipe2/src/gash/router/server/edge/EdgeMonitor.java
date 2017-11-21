@@ -61,8 +61,8 @@ public class EdgeMonitor {
         NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
         ndpReq.setMode(Mode.REQUEST);
         ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
-        ndpReq.setNodeAddress("10.0.0.31");//State.myConfig.getHost()
-        ndpReq.setNodePort(4167);//State.myConfig.getWorkPort()
+        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
         ndpReq.setNodeId(""+State.myConfig.getNodeId());
         
         ndpReq.setSecret("secret");
@@ -91,7 +91,7 @@ public class EdgeMonitor {
             ByteBuf buf = Unpooled.copiedBuffer(msg.toByteArray());
             
             //127.0.0.1
-            ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress(State.myConfig.getHost(), PORT))).sync();
+            ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress("10.0.255.255", PORT))).sync();
 
             // UDPClientHandler will close the DatagramChannel when a
             // response is received.  If the channel is not closed within 5 seconds,
