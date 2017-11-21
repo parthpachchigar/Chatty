@@ -3,10 +3,12 @@ package gash.router.server.state;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.database.DatabaseService;
 import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.edge.EdgeMonitor;
 import io.netty.channel.ChannelFuture;
+import routing.MsgInterface;
 import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
 import routing.MsgInterface.Route;
@@ -71,7 +73,7 @@ public class LeaderState extends State implements Runnable {
 		    public void run(){
 				while (running) {
 					try {
-						Thread.sleep(gash.router.server.state.State.myConfig.getHeartbeatDt());
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -150,4 +152,18 @@ public class LeaderState extends State implements Runnable {
 
 	}
 
+	@Override
+	public void handleMessageEntries(Route msg) {
+		MsgInterface.Message message = msg.getMessage();
+		MsgInterface.Message.ActionType type = message.getAction();
+		if (type == MsgInterface.Message.ActionType.POST) {
+			DatabaseService.getInstance().getDb().postMessage(message.getPayload(), message.getReceiverId(),message.getSenderId());
+		//call replication
+		} else if (type == MsgInterface.Message.ActionType.UPDATE) {
+
+		} else if (type == MsgInterface.Message.ActionType.DELETE) {
+
+		}
+	}
+	
 }

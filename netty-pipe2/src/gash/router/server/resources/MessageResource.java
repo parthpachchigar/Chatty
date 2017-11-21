@@ -18,7 +18,14 @@ package gash.router.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.server.edge.EdgeDiscoveryHandler;
+import gash.router.server.edge.EdgeInfo;
+import gash.router.server.state.State;
+import io.netty.channel.ChannelFuture;
+import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.Route.Path;
 
 /**
  * processes requests of message passing - demonstration
@@ -37,7 +44,26 @@ public class MessageResource implements RouteResource {
 	@Override
 	public Route process(Route body) {
 		logger.info(body.toString());
+		if (State.getStatus() == State.Status.FOLLOWER) {
+			for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
+
+				if (ei.getPort() == State.leaderport && ei.getHost() == State.leaderaddress) {
+					if (ei.getChannel() != null && ei.isActive()) {
+						ChannelFuture cf = ei.getChannel().writeAndFlush(body);
+						if (cf.isDone() && !cf.isSuccess()) {
+							logger.debug("failed to send replication message to leader");
+						}
+					} else {
+						logger.debug("leader channel not active");
+					}
+
+				}
+			}
+		}else if(State.getStatus() == State.Status.LEADER){
+			State.getState().handleMessageEntries(body);
+		}
 		return body;
+
 	}
 
 }
