@@ -10,7 +10,10 @@ import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.edge.EdgeMonitor;
 import io.netty.channel.ChannelFuture;
+import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
 import routing.MsgInterface.Route.Path;
 
 public class CandidateState extends State implements Runnable {
@@ -94,7 +97,15 @@ public class CandidateState extends State implements Runnable {
 				Route.Builder voteMessage = Route.newBuilder();
 				voteMessage.setId(111);
 				voteMessage.setPath(Path.PING);
-
+				NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
+		        ndpReq.setMode(Mode.REQUEST);
+		        ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
+		        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+		        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
+		        ndpReq.setNodeId(""+State.myConfig.getNodeId());
+		        
+		        ndpReq.setSecret("secret");
+		        voteMessage.setNetworkDiscoveryPacket(ndpReq.build());
 				Route vote = voteMessage.build();
 				logger.debug("Sent VoteRequestRPC to " + ei.getRef());
 				ChannelFuture cf = ei.getChannel().writeAndFlush(vote);

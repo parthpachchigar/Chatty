@@ -38,14 +38,16 @@ public class PingResource implements RouteResource {
 
 	@Override
 	public Route process(Route body) {
-		Route reply=null;
+		Route reply = null;
 		logger.info(body.toString());
-		if(State.getStatus()==State.Status.CANDIDATE) {
-			State.setStatus(State.Status.FOLLOWER);
-			
+		if (!reply.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
+			if (State.getStatus() == State.Status.CANDIDATE) {
+				State.setStatus(State.Status.FOLLOWER);
+
+			}
 		}
-		reply=body;
-		
+		reply = body;
+
 		return reply;
 	}
 
