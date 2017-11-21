@@ -80,7 +80,7 @@ public class ConnectApp implements CommListener {
 
 	@Override
 	public void onMessage(Route msg) {
-
+		System.out.println("--> got incoming message" + msg.toString());
 		// TODO Auto-generated method stub
 		
 	}

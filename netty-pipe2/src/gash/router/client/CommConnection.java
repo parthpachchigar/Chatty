@@ -171,7 +171,7 @@ public class CommConnection {
 
 		}
 		try {
-			ServerInit si = new ServerInit(conf, false);
+			CommInit si = new CommInit(false);
 			Bootstrap b = new Bootstrap();
 			b.group(group).channel(NioSocketChannel.class).handler(si);
 			b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);

@@ -72,22 +72,20 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 					Route reply = rsc.process(msg);
 					System.out.println("---> reply: " + reply);
 					if (reply != null) {
-						ChannelFuture cf=channel.writeAndFlush(reply);
+						ChannelFuture cf = channel.writeAndFlush(reply);
 						if (cf.isDone() && !cf.isSuccess()) {
 							logger.error("failed to send message to server - " + msg);
-							
 						}
 					}
 				} catch (Exception e) {
-					// TODO add logging
-					
+					// TODO: add logging
 				}
 			} else {
-				// TODO add logging
+				// TODO: add logging
 				System.out.println("ERROR: unknown path - " + msg.getPath().name().toLowerCase());
 			}
 		} catch (Exception ex) {
-			// TODO add logging
+			// TODO: add logging
 			System.out.println("ERROR: processing request - " + ex.getMessage());
 		}
 
