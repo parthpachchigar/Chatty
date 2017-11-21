@@ -24,6 +24,8 @@ import routing.MsgInterface.Route;
 
 public class ConnectApp implements CommListener {
 	private MessageClient mc;
+	static String uname;
+	static String destination_id;
 
 	public ConnectApp(MessageClient mc) {
 		init(mc);
@@ -35,34 +37,36 @@ public class ConnectApp implements CommListener {
 	}
 	
 	Message.Builder msg = Message.newBuilder();
-	/*public void ping(int N) {
-		
-		for (int n = 0; n < N; n++) {
-			mc.postMessage("hello server ;) " + n);
-		}
-	}*/
-	
-public void continuePing() throws Exception {
+
+	public Route sendMessage(String message){
+		msg.setType(Message.Type.SINGLE);
+		msg.setSenderId(uname);
+		msg.setPayload(message);
+		msg.setReceiverId(destination_id);
+		msg.setTimestamp("systemTime");
+		msg.setAction(Message.ActionType.POST);
+
+		Route.Builder route = Route.newBuilder();
+		route.setId(123);
+		route.setPath(Route.Path.MESSAGE);
+		route.setMessage(msg);
+		return route.build();
+	}
+	public void continuePing() throws Exception {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Username: ");
 		for (;;) {
 			String line = in.readLine();
 			if (line == null) {
 				break;
+			} else if(uname == null){
+				uname = line;
+				System.out.print("destination_id: ");
+			} else if(destination_id == null){
+				destination_id = line;
+			} else {
+				mc.sendMessage(sendMessage(line));
 			}
-			msg.setType(Message.Type.SINGLE);
-			msg.setSenderId("kartk");
-			msg.setPayload(line);
-			msg.setReceiverId("random");
-			msg.setTimestamp("systemTime");
-			msg.setAction(Message.ActionType.POST);
-
-			Route.Builder route = Route.newBuilder();
-			route.setId(123);
-			route.setPath(Route.Path.MESSAGE);
-			route.setMessage(msg);
-			Route routeMessage = route.build();
-			mc.sendMessage(routeMessage);
-
 		}
 	}
 

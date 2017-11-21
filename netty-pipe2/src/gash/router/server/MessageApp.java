@@ -29,16 +29,15 @@ public class MessageApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-		
-		
-		
+		String pathname = "resources/route-1.conf";
 		if (args.length == 0) {
-			System.out.println("usage: server <config file>");
-			System.exit(1);
+			System.out.println("usage: server" + pathname);
+		} else {
+			pathname = args[0];
+			System.out.println("usage: server" + args[0]);
 		}
 
-		File cf = new File(args[0]);
+		File cf = new File(pathname);
 		try {
 			MessageServer svr = new MessageServer(cf);
 			svr.startServer();
