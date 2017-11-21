@@ -170,12 +170,13 @@ public class LeaderState extends State implements Runnable {
 			System.out.println("getMessages: " + messageList);
 		} else {
 			if (type == MsgInterface.Message.ActionType.POST) {
-
+				DatabaseService.getInstance().getDb().postMessage(msg.getMessage().getPayload(), msg.getMessage().getReceiverId(),msg.getMessage().getSenderId());
+				//handleReplicationMessage(msg);
 				//call replication
 			} else if (type == MsgInterface.Message.ActionType.UPDATE) {
 
 			} else if (type == MsgInterface.Message.ActionType.DELETE) {
-
+				//DatabaseService.getInstance().getDb().delete(msg.getMessage().getID()); //TODO: Message Id missing in proto
 			}
 		}
 	}

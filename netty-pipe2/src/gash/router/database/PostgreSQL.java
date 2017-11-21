@@ -190,7 +190,7 @@ public class PostgreSQL implements DatabaseClient {
 		try {
 			stmt = conn.createStatement();
 			StringBuilder sql = new StringBuilder();
-			sql.append("DELETE FROM messages WHERE key LIKE '"+key+"';");
+			sql.append("DELETE FROM messages WHERE \"id\" ='"+key+"';");
 			stmt.executeUpdate(sql.toString());
 
 		} catch (Exception e) {

@@ -53,11 +53,19 @@ public class ConnectApp implements CommListener {
 		return route.build();
 	}
 	public void pingMessage(int N, String line) {
-		final int maxN = 10;
 		long[] dt = new long[N];
 		long st = System.currentTimeMillis(), ft = 0;
 		for (int n = 0; n < N; n++) {
+			if(n % 1400 == 0){
+				try {
+					Thread.sleep(2 * 1000);
+				} catch (InterruptedException e) {
+
+				}
+
+			}
 			mc.sendMessage(sendMessage(line + " : " + n ));
+			System.out.println("sent: "+ line + " : " + n);
 			ft = System.currentTimeMillis();
 			dt[n] = ft - st;
 			st = ft;
