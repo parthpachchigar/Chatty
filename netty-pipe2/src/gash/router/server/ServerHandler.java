@@ -23,16 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import gash.router.container.MessageRoutingConf;
 import gash.router.server.resources.RouteResource;
-import gash.router.server.state.State;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
-import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
-import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
-import routing.MsgInterface.Route.Path;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -63,69 +57,35 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 	public void handleMessage(Route msg, Channel channel) {
 		if (msg == null) {
 			// TODO add logging
-			System.out.println("ERROR: Unexpected content - " + msg);
+			logger.error("Unexpected content - " + msg);
 			return;
 		}
-		if(msg.getPath()==Path.PING) {
-			Route.Builder voteMessage = Route.newBuilder();
-			voteMessage.setId(112);
-			voteMessage.setPath(Path.PING);
-			NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
-	        ndpReq.setMode(Mode.RESPONSE);
-	        ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
-	        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
-	        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
-	        ndpReq.setNodeId(""+State.myConfig.getNodeId());
-	        
-	        ndpReq.setSecret("secret");
-	        voteMessage.setNetworkDiscoveryPacket(ndpReq.build());
-			Route voteResponse = voteMessage.build();
-			logger.info(msg.toString());
-			if (!msg.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
-				if (Integer.parseInt(msg.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
-					State.setStatus(State.Status.FOLLOWER);
-					voteResponse=null;
 
-				}
-			}
-			System.out.println(msg);
-			System.out.println(voteResponse);
-			if (voteResponse != null) {
-				ChannelFuture cf=channel.writeAndFlush(voteResponse);
-				if (cf.isDone() && !cf.isSuccess()) {
-					logger.error("failed to send message to server - " + msg);
-					
-				}
-			}
-		}
-		System.out.println("---> " + msg.getId() + ": " + msg.getPath().name() );
-		System.out.println("------------");
+		logger.info("---> " + msg.getId() + ": " + msg.getPath().name() );
+
 		try {
-			String clazz = routing.get("/" + msg.getPath().name().toLowerCase());
+			String clazz = routing.get("/"+msg.getPath().name().toLowerCase());
 			if (clazz != null) {
 				RouteResource rsc = (RouteResource) Beans.instantiate(RouteResource.class.getClassLoader(), clazz);
 				try {
 					Route reply = rsc.process(msg);
-					System.out.println("---> reply: " + reply);
 					if (reply != null) {
-						ChannelFuture cf = channel.writeAndFlush(reply);
-						if (cf.isDone() && !cf.isSuccess()) {
-							logger.error("failed to send message to server - " + msg);
-						}
+						channel.writeAndFlush(reply);
 					}
 				} catch (Exception e) {
-					// TODO: add logging
+					// TODO add logging
+					logger.error("Not able to reply");
+					
 				}
 			} else {
-				// TODO: add logging
-				System.out.println("ERROR: unknown path - " + msg.getPath().name().toLowerCase());
+				// TODO add logging
+				logger.error("Unknown path - " + msg.getPath().name().toLowerCase());
 			}
 		} catch (Exception ex) {
-			// TODO: add logging
-			System.out.println("ERROR: processing request - " + ex.getMessage());
+			// TODO add logging
+			logger.error("Processing request - " + ex.getMessage());
 		}
 
-		System.out.flush();
 	}
 
 	/**
@@ -140,7 +100,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Route> {
 	 */
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
-		System.out.println("------------");
+		
 		handleMessage(msg, ctx.channel());
 	}
 

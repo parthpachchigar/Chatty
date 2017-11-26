@@ -32,7 +32,7 @@ import routing.MsgInterface.Route.Path;
  * @author gash
  * 
  */
-public class PingResource implements RouteResource {
+public class VoteRequestResource implements RouteResource {
 	protected static Logger logger = LoggerFactory.getLogger("ping");
 
 	@Override
@@ -42,33 +42,26 @@ public class PingResource implements RouteResource {
 
 	@Override
 	public Route process(Route body) {
-		Route.Builder voteMessage = Route.newBuilder();
-		voteMessage.setId(112);
-		voteMessage.setPath(Path.PING);
-		NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
-        ndpReq.setMode(Mode.RESPONSE);
-        ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
-        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
-        ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
-        ndpReq.setNodeId(""+State.myConfig.getNodeId());
-        
-        ndpReq.setSecret("secret");
-        voteMessage.setNetworkDiscoveryPacket(ndpReq.build());
-		Route voteResponse = voteMessage.build();
-		logger.info(body.toString());
-		if (!body.getNetworkDiscoveryPacket().getNodeAddress().equals(State.myConfig.getHost())) {
-			if (Integer.parseInt(body.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
+		logger.info("In Ping Resource");
+		Route reply = null;
+		Route.Builder voteReply = Route.newBuilder();
+		if (body.hasNetworkDiscoveryPacket()) {
+			if(State.getStatus()==State.Status.CANDIDATE && Integer.parseInt(body.getNetworkDiscoveryPacket().getNodeId())>State.myConfig.getNodeId()) {
 				State.setStatus(State.Status.FOLLOWER);
-				voteResponse=null;
-
 			}
+			voteReply.setId(112);
+			voteReply.setPath(Path.PING);
+			NetworkDiscoveryPacket.Builder ndp=NetworkDiscoveryPacket.newBuilder();
+			ndp.setSender(Sender.INTERNAL_SERVER_NODE);
+			ndp.setMode(Mode.RESPONSE);
+			ndp.setNodeId(""+State.myConfig.getNodeId());
+			ndp.setNodeAddress(State.myConfig.getHost());
+			ndp.setNodePort(State.myConfig.getWorkPort());
+			ndp.setSecret("secret");
+			voteReply.setNetworkDiscoveryPacket(ndp.build());
+			reply=voteReply.build();
 		}
-		System.out.println(body);
-		System.out.println(voteResponse);
-		
-		
-
-		return voteResponse;
+		return reply;
 	}
 
 }

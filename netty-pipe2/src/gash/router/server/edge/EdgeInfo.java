@@ -2,6 +2,7 @@ package gash.router.server.edge;
 
 import java.util.ArrayList;
 
+import gash.router.client.CommConnection;
 import io.netty.channel.Channel;
 
 public class EdgeInfo {
@@ -11,13 +12,19 @@ public class EdgeInfo {
 	private long lastHeartbeat = -1;
 	private boolean active = false;
 	private Channel channel;
+	private CommConnection comm;
 	public static ArrayList<Integer> availableNodes = new ArrayList<Integer>();
 	EdgeInfo(int ref, String host, long port2) {
 		this.ref = ref;
 		this.host = host;
 		this.port = port2;
 	}
-
+	public void setComm(CommConnection comm) {
+		this.comm=comm;
+	}
+	public CommConnection getComm() {
+		return comm;
+	}
 	public int getRef() {
 		return ref;
 	}

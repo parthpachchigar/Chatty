@@ -9,36 +9,24 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
+import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
 import routing.MsgInterface.Route;
-import routing.MsgInterface.NetworkDiscoveryPacket;
+import routing.MsgInterface.Route.Path;
 
 public class UdpClientHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("client");
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Route route) throws Exception {
-        System.out.println("Recieved a datagram packet " + route);
-        System.out.println("***************lets begin test****************");
-        if (route.getNetworkDiscoveryPacket().getMode() == NetworkDiscoveryPacket.Mode.RESPONSE) {
-            String toConnectIP = route.getNetworkDiscoveryPacket().getNodeAddress();
-            int toConnectPort = (int) route.getNetworkDiscoveryPacket().getNodePort();
-            if(null != toConnectIP) {
-                try {
-                    MessageClient mc = new MessageClient(toConnectIP, toConnectPort);
-                    ConnectApp ca = new ConnectApp(mc);
-                    Thread.sleep(6 * 1000);
-                    ca.continuePing();
-                    System.out.println("\n** exiting in 10 seconds. **");
-                    System.out.flush();
-                    Thread.sleep(4 * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    CommConnection.getInstance().release();
-                }
-            }
+    public void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
+        
+        if(msg.getPath()==Path.NETWORK_DISCOVERY) {
+        	if(msg.hasNetworkDiscoveryPacket() && msg.getNetworkDiscoveryPacket().getMode()==Mode.RESPONSE) {
+        		ConnectApp.nodes.add(new Nodes(msg.getNetworkDiscoveryPacket().getNodeAddress(),msg.getNetworkDiscoveryPacket().getNodePort()));
+        	}else {
+        		logger.error("Invalid Network Discovery Package Received :"+msg);
+        	}
         }
-
+        ctx.flush();
     }
 
     @Override

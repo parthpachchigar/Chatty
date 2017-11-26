@@ -8,3 +8,23 @@ Technologies introduced:
 1. Netty
 2. Protobuf
 3. JAXB
+
+
+To Start Client:
+	$ ./runClient.sh
+
+
+
+To Start Server (on 4 different host):
+
+	on host 1
+	$ ./startServer.sh resoures/route-1.conf
+	
+	on host 2
+	$ ./startServer.sh resoures/route-2.conf
+	
+	on host 3
+	$ ./startServer.sh resoures/route-3.conf
+	
+	on host 4
+	$ ./startServer.sh resoures/route-4.conf

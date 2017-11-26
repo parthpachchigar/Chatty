@@ -26,162 +26,7 @@ public class PostgreSQL implements DatabaseClient {
 		conn = DriverManager.getConnection(url, props);
 	}
 
-	@Override
-	public byte[] get(String key) {
-		Statement stmt = null;
-		byte[] image=null;
-		System.out.println(key);
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select image FROM testtable WHERE \"key\" LIKE '"+key+"'");
-
-			while (rs.next()) {
-				image=rs.getBytes(1);
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-		return image;
-	}
-
-	@Override
-	public List<Record> getNewEntries(long staleTimestamp) {
-		Statement stmt = null;
-		List<Record> list = new ArrayList<Record>();
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select key, image, timestamp FROM testtable where timestamp > " + staleTimestamp);
-
-			while (rs.next()) {
-				list.add(new Record(rs.getString(1), rs.getBytes(2), rs.getLong(3)));
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-		return list;
-	}
-
-
-	@Override
-	public List<Record> getAllEntries() {
-		Statement stmt = null;
-		List<Record> list = new ArrayList<Record>();
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select key, image, timestamp FROM testtable");
-
-			while (rs.next()) {
-				list.add(new Record(rs.getString(1), rs.getBytes(2), rs.getLong(3)));
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-		return list;
-	}
-
-
-	@Override
-	public long getCurrentTimeStamp() {
-		Statement stmt = null;
-		long timestamp = 0;
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select max(timestamp) FROM testtable");
-
-			while (rs.next()) {
-				timestamp = rs.getLong(1);
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-		return timestamp;
-	}
-
-
-	@Override
-	public String post(byte[] image, long timestamp){
-		String key = UUID.randomUUID().toString();
-		PreparedStatement ps = null;
-		try {
-			ps = conn.prepareStatement("INSERT INTO testtable VALUES ( ?, ?, ?)");
-			ps.setString(1, key);
-			ps.setBytes(2, image);
-			ps.setLong(3, timestamp);
-			ResultSet set = ps.executeQuery();
-
-		} catch (SQLException e) {
-
-		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return key;
-	}
-
-
-	@Override
-	public void post(String key, byte[] image, long timestamp){
-		PreparedStatement ps = null;
-		try {
-			ps = conn.prepareStatement("INSERT INTO testtable VALUES ( ?, ?, ?)");
-			ps.setString(1, key);
-			ps.setBytes(2, image);
-			ps.setLong(3, timestamp);
-			ResultSet set = ps.executeQuery();
-
-		} catch (SQLException e) {
-		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void put(String key, byte[] image, long timestamp){
-		PreparedStatement ps = null;
-		try {
-			ps = conn.prepareStatement("UPDATE testtable SET image= ? , timestamp = ?  WHERE key LIKE ?");
-			ps.setBytes(1, image);
-			ps.setLong(2, timestamp);
-			ps.setString(3, key);
-			ResultSet set = ps.executeQuery();
-
-		} catch (SQLException e) {
-		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-
-
-	@Override
-	public void putEntries(List<Record> list){
-		for (Record record : list) {
-			put(record.getKey(), record.getImage(), record.getTimestamp());
-		}
-	}
+		
 
 
 	@Override
@@ -190,7 +35,7 @@ public class PostgreSQL implements DatabaseClient {
 		try {
 			stmt = conn.createStatement();
 			StringBuilder sql = new StringBuilder();
-			sql.append("DELETE FROM messages WHERE key LIKE '"+key+"';");
+			sql.append("UPDATE messages set archived=now() WHERE key LIKE '"+key+"';");
 			stmt.executeUpdate(sql.toString());
 
 		} catch (Exception e) {
@@ -199,42 +44,22 @@ public class PostgreSQL implements DatabaseClient {
 			// initiate new everytime
 		}
 	}
-	@Override
-	public ResultSetMetaData getMessage(String key) {
-		ResultSetMetaData rsmd = null;
-		Statement stmt = null;
-		System.out.println("getMessage: " + key);
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select * FROM messages WHERE \"id\" ='"+key+"';") ;
-			rsmd=rs.getMetaData();
-
-			rs.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-		}
-
-		return rsmd;
-	}
-	//@Override
-	public List getMessages(String fromId, String destId) {
+		//@Override
+	public ResultSet getMessages(String forWhom) {
 		List list = null;
 		Statement stmt = null;
-		System.out.println("getMessage: " + fromId);
+		ResultSet rs=null;
+		System.out.println("getMessage: " + forWhom);
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("Select * FROM messages WHERE \"from_id\" ='"+fromId+"';") ;
-			list = resultSetToArrayList(rs);
-			rs.close();
+			rs = stmt.executeQuery("Select distinct * FROM messages WHERE \"to_id\" ='"+forWhom+"' and archived=NULL;") ;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 		}
 
-		return list;
+		return rs;
 	}
 	@Override
 	public void postMessage(String message, String toId,String fromId){
@@ -273,6 +98,9 @@ public class PostgreSQL implements DatabaseClient {
 			stmt.executeUpdate(migrationSql.seqUserTable());
 			stmt.executeUpdate(migrationSql.createUserTable());
 
+			stmt.executeUpdate(migrationSql.seqUserInGroupTable());
+			stmt.executeUpdate(migrationSql.createUserInGroupTable());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -292,6 +120,108 @@ public class PostgreSQL implements DatabaseClient {
 		}
 
 		return list;
+	}
+
+
+
+
+	
+
+
+
+	@Override
+	public void registerUser(String userName) {
+		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("INSERT INTO users (username) VALUES ( ?)");
+			ps.setString(1, userName);
+			
+			ResultSet set = ps.executeQuery();
+
+		} catch (SQLException e) {
+
+		} finally {
+			try {
+				if (ps != null)
+					ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		
+	}
+
+
+
+
+	@Override
+	public void createGroup(String groupName) {
+		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("INSERT INTO groups (gname) VALUES ( ?)");
+			ps.setString(1, groupName);
+			ResultSet set = ps.executeQuery();
+
+		} catch (SQLException e) {
+
+		} finally {
+			try {
+				if (ps != null)
+					ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+
+
+
+	@Override
+	public void deleteGroup(String groupName) {
+		// TODO Auto-generated method stub
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE groups set archived=now() WHERE gname='"+groupName+"';");
+			stmt.executeUpdate(sql.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// initiate new everytime
+		}
+
+	}
+
+
+
+
+	@Override
+	public void addUserToGroup(String userName, String groupName) {
+		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement("INSERT INTO usergroups (gid,uid) VALUES ((select gid from groups where gname='"+groupName+"'),(select id from users where username='"+userName+"') )");
+			
+			ResultSet set = ps.executeQuery();
+
+		} catch (SQLException e) {
+
+		} finally {
+			try {
+				if (ps != null)
+					ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }

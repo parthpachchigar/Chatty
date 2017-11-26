@@ -29,10 +29,12 @@ import org.slf4j.LoggerFactory;
 
 import gash.router.container.MessageRoutingConf;
 import gash.router.container.RoutingConf;
+import gash.router.database.DatabaseClient;
+import gash.router.database.DatabaseService;
 import gash.router.server.edge.EdgeMonitor;
 import gash.router.server.state.FollowerState;
 import gash.router.server.state.State;
-import gash.router.server.state.StateMachine;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -41,14 +43,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class MessageServer {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	public static Logger logger = LoggerFactory.getLogger("server");
 
 	protected static HashMap<Integer, ServerBootstrap> bootstrap = new HashMap<Integer, ServerBootstrap>();
 
 	public static final String sPort = "port";
 	public static final String sPoolSize = "pool.size";
 
-	public static MessageRoutingConf conf;
+	protected MessageRoutingConf conf;
 	protected RoutingConf conf2;
 	protected boolean background = false;
 
@@ -140,6 +142,22 @@ public class MessageServer {
 		}
 		logger.info("Node id is "+State.myConfig.getNodeId());
 		
+		
+		
+		//************************* Database Init ************************
+		
+		DatabaseService dbs= DatabaseService.getInstance();
+		dbs.dbConfiguration("postgresql","jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "pup");
+		DatabaseClient dbc= dbs.getDb();
+		dbc.createDb();
+		logger.info("Database Initialized");
+		//******************************************************************
+		
+		
+		
+		
+		Thread discoveryThread = new Thread(new UdpServer());
+		discoveryThread.start();
 		State.setStatus(State.Status.FOLLOWER);
 		//StateMachine.running=false;
 		//new Thread(new StateMachine()).start();

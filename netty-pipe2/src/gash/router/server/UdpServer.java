@@ -16,12 +16,14 @@ public final class UdpServer implements Runnable{
     private static final int PORT = Integer.parseInt(System.getProperty("port", "8888"));
     static AttributeKey<String> attkey = AttributeKey.valueOf("clientid");
 
-   
-    
+    public static void main(String[] args) throws Exception {
+    	Thread t=new Thread(new UdpServer());
+    	t.start();
+    }
+
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-	
 		EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -49,10 +51,5 @@ public final class UdpServer implements Runnable{
             group.shutdownGracefully();
         }
 
-	}
-	public static void main(String a[]) {
-		Thread discoveryThread = new Thread(new UdpServer());
-		discoveryThread.start();
-		
 	}
 }

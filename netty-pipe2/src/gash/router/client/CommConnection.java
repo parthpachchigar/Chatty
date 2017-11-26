@@ -15,19 +15,12 @@
  */
 package gash.router.client;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
 
-import gash.router.container.MessageRoutingConf;
-import gash.router.server.MessageServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gash.router.server.MessageServer;
 import gash.router.server.ServerInit;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -50,8 +43,7 @@ public class CommConnection {
 	protected static Logger logger = LoggerFactory.getLogger("connect");
 
 	protected static AtomicReference<CommConnection> instance = new AtomicReference<CommConnection>();
-	MessageRoutingConf conf;
-
+	private static int count=0;
 	private String host;
 	private int port;
 	private ChannelFuture channel; // do not use directly call
@@ -80,7 +72,7 @@ public class CommConnection {
 	}
 
 	public static CommConnection initConnection(String host, int port) {
-		instance.compareAndSet(null, new CommConnection(host, port));
+		instance.set( new CommConnection(host, port));
 		return instance.get();
 	}
 
@@ -88,7 +80,10 @@ public class CommConnection {
 		// TODO throw exception if not initialized!
 		return instance.get();
 	}
-
+	
+	public String getHost() {
+		return host;
+	}
 	/**
 	 * release all resources
 	 */
@@ -132,11 +127,21 @@ public class CommConnection {
 		// TODO a queue is needed to prevent overloading of the socket
 		// connection. For the demonstration, we don't need it
 		ChannelFuture cf = connect().writeAndFlush(msg);
+		
 		if (cf.isDone() && !cf.isSuccess()) {
 			logger.error("failed to send message to server - " + msg);
 			return false;
 		}
-
+		logger.info("write successful");
+		count++;
+		if(count%800==0) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return true;
 	}
 
@@ -147,33 +152,23 @@ public class CommConnection {
 	 */
 	public void addListener(CommListener listener) {
 		CommHandler handler = connect().pipeline().get(CommHandler.class);
-		if (handler != null)
+		if (handler != null) {
+			logger.info("in setting listener");
 			handler.addListener(listener);
+		}
 	}
 
 	private void init() {
-		System.out.println("--> initializing connection to " + host + ":" + port);
+		logger.info("--> initializing connection to " + host + ":" + port);
 
 		// the queue to support client-side surging
 		outbound = new LinkedBlockingDeque<Route>();
 
 		group = new NioEventLoopGroup();
-		File routeconf = new File("resources/routing.conf");
-		BufferedInputStream br = null;
 		try {
-			byte[] raw = new byte[(int) routeconf.length()];
-			br = new BufferedInputStream(new FileInputStream(routeconf));
-			br.read(raw);
-			conf = MessageServer.JsonUtil.decode(new String(raw), MessageRoutingConf.class);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException("verification of configuration failed");
-
-		}
-		try {
-			CommInit si = new CommInit(false);
+			CommInit ci = new CommInit(false);
 			Bootstrap b = new Bootstrap();
-			b.group(group).channel(NioSocketChannel.class).handler(si);
+			b.group(group).channel(NioSocketChannel.class).handler(ci);
 			b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
 			b.option(ChannelOption.TCP_NODELAY, true);
 			b.option(ChannelOption.SO_KEEPALIVE, true);
@@ -186,7 +181,7 @@ public class CommConnection {
 			ClientClosedListener ccl = new ClientClosedListener(this);
 			channel.channel().closeFuture().addListener(ccl);
 
-			System.out.println(channel.channel().localAddress() + " -> open: " + channel.channel().isOpen()
+			logger.info(channel.channel().localAddress() + " -> open: " + channel.channel().isOpen()
 					+ ", write: " + channel.channel().isWritable() + ", reg: " + channel.channel().isRegistered());
 
 		} catch (Throwable ex) {
@@ -205,7 +200,7 @@ public class CommConnection {
 	 * 
 	 * @return
 	 */
-	protected Channel connect() {
+	public Channel connect() {
 		// Start the connection attempt.
 		if (channel == null) {
 			init();
@@ -237,8 +232,9 @@ public class CommConnection {
 		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
 			// we lost the connection or have shutdown.
-			System.out.println("--> client lost connection to the server");
-			System.out.flush();
+			logger.info("--> client lost connection to the server");
+			
+			//System.out.flush();
 
 			// @TODO if lost, try to re-establish the connection
 		}

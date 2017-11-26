@@ -4,7 +4,7 @@ public class MigrationsPostgreSQL {
 
     public String createMessageTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE TABLE messages ( " +
+        return sql.append("CREATE TABLE IF NOT EXISTS messages ( " +
                 " id             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('msg_'::text || (substr(md5((random())::text), 1, 4) || (nextval('messages_seq'::regclass))::text)),\n" +
                 " message        varchar NOT NULL, " +
                 " to_id          varchar CONSTRAINT no_null NOT NULL,\n" +
@@ -15,7 +15,7 @@ public class MigrationsPostgreSQL {
     }
     public String seqMessageTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE SEQUENCE messages_seq\n" +
+        return sql.append("CREATE SEQUENCE IF NOT EXISTS messages_seq\n" +
                 "                    INCREMENT 1\n" +
                 "                    MINVALUE 1000\n" +
                 "                    MAXVALUE 999999999\n" +
@@ -25,7 +25,7 @@ public class MigrationsPostgreSQL {
     }
     public String createGroupTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE TABLE groups ( " +
+        return sql.append("CREATE TABLE IF NOT EXISTS groups ( " +
                 " gid             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('group_seq'::regclass))::text)),\n" +
                 " gname          varchar NOT NULL, " +
                 " created        TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
@@ -34,7 +34,7 @@ public class MigrationsPostgreSQL {
     }
     public String seqGroupTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE SEQUENCE group_seq\n" +
+        return sql.append("CREATE SEQUENCE IF NOT EXISTS group_seq\n" +
                 "                    INCREMENT 1\n" +
                 "                    MINVALUE 1000\n" +
                 "                    MAXVALUE 999999999\n" +
@@ -44,19 +44,18 @@ public class MigrationsPostgreSQL {
     }
     public String createUserTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE TABLE users ( " +
+        return sql.append("CREATE TABLE IF NOT EXISTS users ( " +
                 " id             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('user_seq'::regclass))::text)),\n" +
-                " email          varchar NOT NULL, " +
-                " password          varchar NOT NULL, " +
+                " email          varchar, " +
+                " password          varchar, " +
                 " username       varchar,\n" +
-                " recentActiveTime TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
                 " created        TIMESTAMP CONSTRAINT no_null NOT NULL DEFAULT now(),\n" +
                 " archived       TIMESTAMP\n" +
                 ");").toString();
     }
     public String seqUserTable(){
         StringBuilder sql = new StringBuilder();
-        return sql.append("CREATE SEQUENCE user_seq\n" +
+        return sql.append("CREATE SEQUENCE IF NOT EXISTS user_seq\n" +
                 "                    INCREMENT 1\n" +
                 "                    MINVALUE 1000\n" +
                 "                    MAXVALUE 999999999\n" +
@@ -64,6 +63,23 @@ public class MigrationsPostgreSQL {
                 "                    CYCLE\n" +
                 "            ;").toString();
     }
-
+    public String createUserInGroupTable(){
+        StringBuilder sql = new StringBuilder();
+        return sql.append("CREATE TABLE IF NOT EXISTS usergroups ( " +
+                " ugid             varchar PRIMARY KEY CONSTRAINT no_null NOT NULL DEFAULT ('group_'::text || (substr(md5((random())::text), 1, 4) || (nextval('usergroup_seq'::regclass))::text)),\n" +
+                " gid              varchar NOT NULL, " +
+                " uid              varchar NOT NULL " +
+                ");").toString();
+    }
+    public String seqUserInGroupTable(){
+        StringBuilder sql = new StringBuilder();
+        return sql.append("CREATE SEQUENCE IF NOT EXISTS usergroup_seq\n" +
+                "                    INCREMENT 1\n" +
+                "                    MINVALUE 1000\n" +
+                "                    MAXVALUE 999999999\n" +
+                "                    START 1001\n" +
+                "                    CYCLE\n" +
+                "            ;").toString();
+    }
 }
 

@@ -54,9 +54,9 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<Route> {
             }else {
             	ndpReq.setSender(Sender.EXTERNAL_SERVER_NODE);
             }
-            ndpReq.setNodeAddress("10.0.0.31");
-            ndpReq.setNodePort(4167);
-            ndpReq.setNodeId(""+1);
+            ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+            ndpReq.setNodePort(State.myConfig.getWorkPort());
+            ndpReq.setNodeId(""+State.myConfig.getNodeId());
             ndpReq.setSecret("secret");
             toSend.setNetworkDiscoveryPacket(ndpReq.build());
             Route myResponse = toSend.build();

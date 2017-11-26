@@ -3,20 +3,19 @@ package gash.router.server.state;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gash.router.database.DatabaseService;
+import gash.router.server.MessageServer;
 import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.edge.EdgeMonitor;
 import io.netty.channel.ChannelFuture;
-import routing.MsgInterface;
 import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
 import routing.MsgInterface.Route;
 import routing.MsgInterface.Route.Path;
 
 public class LeaderState extends State implements Runnable {
     //making it singleton
-	public static Logger logger=LoggerFactory.getLogger("server");
 	private static LeaderState INSTANCE = null;
 	Thread heartBt = null;
 	Thread discover=null;
@@ -36,7 +35,7 @@ public class LeaderState extends State implements Runnable {
 
 	@Override
 	public void run() {
-		logger.info("-----------------------LEADER SERVICE STARTED ----------------------------");
+		MessageServer.logger.info("=========== LEADER SERVICE STARTED ===========");
 //		NodeState.currentTerm++;
 	//	initLatestTimeStampOnUpdate();
 		discover=new Thread() {
@@ -73,7 +72,7 @@ public class LeaderState extends State implements Runnable {
 		    public void run(){
 				while (running) {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(gash.router.server.state.State.myConfig.getHeartbeatDt());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -91,6 +90,34 @@ public class LeaderState extends State implements Runnable {
 		//NodeState.setTimeStampOnLatestUpdate(DatabaseService.getInstance().getDb().getCurrentTimeStamp());
 
 	}
+	
+	
+	public void sendHeartBeat() {
+		for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
+			MessageServer.logger.debug("I have started contacting");
+			
+			if (ei.isActive() && ei.getChannel() != null && ei.getRef() != 0) {
+				// Create route message for heartbeat using header as path
+				Route.Builder heartbeatMessage = Route.newBuilder();
+				heartbeatMessage.setId(222);
+				heartbeatMessage.setPath(Path.HEADER);
+				NetworkDiscoveryPacket.Builder ndp = NetworkDiscoveryPacket.newBuilder();
+				ndp.setNodeAddress(State.myConfig.getHost());
+				ndp.setNodePort(State.myConfig.getWorkPort());
+				ndp.setMode(Mode.REQUEST);
+				ndp.setSender(Sender.INTERNAL_SERVER_NODE);
+				ndp.setSecret("secret");
+				heartbeatMessage.setNetworkDiscoveryPacket(ndp.build());
+				Route heartbeat = heartbeatMessage.build();
+				MessageServer.logger.debug("Sent heartbeat to " + ei.getRef());
+				ei.getComm().write(heartbeat);
+			}
+		}
+
+	}
+	
+	
+	
 	public void startService(State state) {
 		running = Boolean.TRUE;
 		cthread = new Thread((LeaderState) state);
@@ -103,67 +130,27 @@ public class LeaderState extends State implements Runnable {
             try {
                 cthread.join();
             } catch (InterruptedException e) {
-                logger.error("Exception", e);
+            	MessageServer.logger.error("Exception", e);
             }
-            logger.error("cthread successfully stopped.");
+            MessageServer.logger.info("cthread successfully stopped.");
         } 
 		if (display != null) {
 			try {
 				display.join();
 			} catch (InterruptedException e) {
-				logger.error("Exception", e);
+				MessageServer.logger.error("Exception", e);
 			}
-			logger.error("display successfully stopped.");
+			MessageServer.logger.info("display successfully stopped.");
 		}
 		if (discover != null) {
 			try {
 				discover.join();
 			} catch (InterruptedException e) {
-				logger.error("Exception", e);
+				MessageServer.logger.error("Exception", e);
 			}
-			logger.error("discover successfully stopped.");
-		}
-
-	}
-	public void sendHeartBeat() {
-		for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
-			logger.debug("I have started contacting");
-			System.out.println(ei.isActive());
-			System.out.println(ei.getChannel());
-
-			if (ei.isActive() && ei.getChannel() != null && ei.getRef() != 0) {
-				// Create route message for vote using ping as path
-				Route.Builder voteMessage = Route.newBuilder();
-				voteMessage.setId(111);
-				voteMessage.setPath(Path.HEADER);
-				NetworkDiscoveryPacket.Builder ndp = NetworkDiscoveryPacket.newBuilder();
-				ndp.setNodeAddress(State.myConfig.getHost());
-				ndp.setNodePort(State.myConfig.getWorkPort());
-				ndp.setMode(Mode.REQUEST);
-				voteMessage.setNetworkDiscoveryPacket(ndp.build());
-				Route vote = voteMessage.build();
-				logger.debug("Sent heartbeatRPC to " + ei.getRef());
-				ChannelFuture cf = ei.getChannel().writeAndFlush(vote);
-				if (cf.isDone() && !cf.isSuccess()) {
-					logger.debug("failed to send message (VoteRequest) to server");
-				}
-			}
+			MessageServer.logger.info("discover successfully stopped.");
 		}
 
 	}
 
-	@Override
-	public void handleMessageEntries(Route msg) {
-		MsgInterface.Message message = msg.getMessage();
-		MsgInterface.Message.ActionType type = message.getAction();
-		if (type == MsgInterface.Message.ActionType.POST) {
-			DatabaseService.getInstance().getDb().postMessage(message.getPayload(), message.getReceiverId(),message.getSenderId());
-		//call replication
-		} else if (type == MsgInterface.Message.ActionType.UPDATE) {
-
-		} else if (type == MsgInterface.Message.ActionType.DELETE) {
-
-		}
-	}
-	
 }

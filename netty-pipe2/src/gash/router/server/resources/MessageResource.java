@@ -18,13 +18,19 @@ package gash.router.server.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+
+import gash.router.database.DatabaseClient;
+import gash.router.database.DatabaseService;
+import gash.router.server.MessageServer;
 import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.state.State;
-import io.netty.channel.ChannelFuture;
+import routing.MsgInterface.Message;
 import routing.MsgInterface.NetworkDiscoveryPacket;
 import routing.MsgInterface.Route;
 import routing.MsgInterface.NetworkDiscoveryPacket.Mode;
+import routing.MsgInterface.NetworkDiscoveryPacket.Sender;
 import routing.MsgInterface.Route.Path;
 
 /**
@@ -43,27 +49,42 @@ public class MessageResource implements RouteResource {
 
 	@Override
 	public Route process(Route body) {
-		logger.info(body.toString());
-		if (State.getStatus() == State.Status.FOLLOWER) {
+		if(State.getStatus()==State.Status.LEADER) {
+			DatabaseService dbs= DatabaseService.getInstance();
+			dbs.dbConfiguration("postgresql","jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "pup");
+			DatabaseClient dbc= dbs.getDb();
+			dbc.postMessage(body.getMessage().getPayload(),body.getMessage().getSenderId(),body.getMessage().getReceiverId());
+			logger.info("Got message "+body.getMessage());
+			
 			for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
+				MessageServer.logger.debug("I have started contacting");
+				
+				if (ei.isActive() && ei.getChannel() != null && ei.getRef() != 0) {
+					// Create route message for replication using replicate as path
+					Message.Builder msg = Message.newBuilder();
+					msg.setType(Message.Type.SINGLE);
+					msg.setSenderId(body.getMessage().getSenderId());
+					msg.setPayload(body.getMessage().getPayload());
+					msg.setReceiverId(body.getMessage().getReceiverId());
+					msg.setTimestamp("systemTime");
+					msg.setAction(Message.ActionType.POST);
 
-				if (ei.getPort() == State.leaderport && ei.getHost() == State.leaderaddress) {
-					if (ei.getChannel() != null && ei.isActive()) {
-						ChannelFuture cf = ei.getChannel().writeAndFlush(body);
-						if (cf.isDone() && !cf.isSuccess()) {
-							logger.debug("failed to send replication message to leader");
-						}
-					} else {
-						logger.debug("leader channel not active");
-					}
+					Route.Builder route = Route.newBuilder();
+					route.setId(555);
+					route.setPath(Route.Path.REPLICATE);
+					route.setMessage(msg);
+					
 
+					ei.getComm().write(route.build());
 				}
 			}
-		}else if(State.getStatus() == State.Status.LEADER){
-			State.getState().handleMessageEntries(body);
+			
+			logger.info("Sent message for replication"+body.getMessage());
+			
+		}else {
+			State.leaderConnection.write(body);
 		}
-		return body;
-
+		return null;
 	}
 
 }

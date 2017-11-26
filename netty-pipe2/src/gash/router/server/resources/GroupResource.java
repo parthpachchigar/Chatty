@@ -9,25 +9,35 @@ import gash.router.server.MessageServer;
 import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import gash.router.server.state.State;
+import routing.MsgInterface.Group;
+import routing.MsgInterface.Message;
 import routing.MsgInterface.Route;
 
-public class UserResource implements RouteResource {
+public class GroupResource implements RouteResource {
 	protected static Logger logger = LoggerFactory.getLogger("group");
-
 	@Override
 	public String getPath() {
 		// TODO Auto-generated method stub
-		return "/user";
+		return "/group";
 	}
 
 	@Override
 	public Route process(Route body) {
 		// TODO Auto-generated method stub
 		if(State.getStatus()==State.Status.LEADER) {
-			DatabaseService dbs= DatabaseService.getInstance();
-			dbs.dbConfiguration("postgresql","jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "pup");
-			DatabaseClient dbc= dbs.getDb();
-			dbc.registerUser(body.getUser().getUname());
+			DatabaseService dbs = DatabaseService.getInstance();
+			dbs.dbConfiguration("postgresql", "jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "pup");
+			DatabaseClient dbc = dbs.getDb();
+		
+			if (body.getGroup().getAction() == Group.ActionType.CREATE) {
+				dbc.createGroup(body.getGroup().getGname());
+			}
+			if (body.getGroup().getAction() == Group.ActionType.DELETE) {
+				dbc.deleteGroup(body.getGroup().getGname());
+			}
+			if (body.getGroup().getAction() == Group.ActionType.ADDUSER) {
+				dbc.addUserToGroup(body.getGroup().getUsername(), body.getGroup().getGname());
+			}
 			for (EdgeInfo ei : EdgeDiscoveryHandler.outbound.getMap().values()) {
 				MessageServer.logger.debug("I have started contacting");
 				
@@ -38,7 +48,7 @@ public class UserResource implements RouteResource {
 					Route.Builder route = Route.newBuilder();
 					route.setId(555);
 					route.setPath(Route.Path.REPLICATE);
-					route.setUser(body.getUser());
+					route.setGroup(body.getGroup());
 					
 
 					ei.getComm().write(route.build());

@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import gash.router.client.UdpClientHandler;
 import gash.router.container.RoutingConf;
 import gash.router.container.RoutingConf.RoutingEntry;
+import gash.router.server.MessageServer;
 import gash.router.server.state.State;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -61,7 +62,7 @@ public class EdgeMonitor {
         NetworkDiscoveryPacket.Builder ndpReq = NetworkDiscoveryPacket.newBuilder();
         ndpReq.setMode(Mode.REQUEST);
         ndpReq.setSender(Sender.INTERNAL_SERVER_NODE);
-        ndpReq.setNodeAddress(State.myConfig.getHost());//State.myConfig.getHost()
+        ndpReq.setNodeAddress(State.myConfig.getHost());
         ndpReq.setNodePort(State.myConfig.getWorkPort());//State.myConfig.getWorkPort()
         ndpReq.setNodeId(""+State.myConfig.getNodeId());
         
@@ -90,14 +91,14 @@ public class EdgeMonitor {
 
             ByteBuf buf = Unpooled.copiedBuffer(msg.toByteArray());
             
-            //127.0.0.1
+
             ch.writeAndFlush(new DatagramPacket(buf,SocketUtils.socketAddress("10.0.255.255", PORT))).sync();
 
             // UDPClientHandler will close the DatagramChannel when a
             // response is received.  If the channel is not closed within 5 seconds,
             // print an error message and quit.
             if (!ch.closeFuture().await(5000)) {
-                System.out.println("request served.");
+                MessageServer.logger.info("request served.");
             }
         } catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -122,9 +123,9 @@ public class EdgeMonitor {
 
 		for (RoutingEntry i : State.myConfig.getRouting()) {
 			if (EdgeInfo.availableNodes.contains(i.getId())) {
-				System.out.println("Node active:" + i.getId());
+				MessageServer.logger.info("Node active:" + i.getId());
 			} else {
-				System.out.println("Node inactive:" + i.getId());
+				MessageServer.logger.info("Node inactive:" + i.getId());
 			}
 		}
 

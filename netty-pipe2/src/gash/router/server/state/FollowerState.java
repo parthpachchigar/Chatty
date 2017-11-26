@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gash.router.server.MessageServer;
 import gash.router.server.edge.EdgeDiscoveryHandler;
 import gash.router.server.edge.EdgeInfo;
 import io.netty.channel.ChannelFuture;
@@ -21,7 +22,6 @@ import routing.MsgInterface.Message;
 public class FollowerState extends State implements Runnable{
 	public static Boolean isHeartBeatRecieved = Boolean.FALSE;
 	public static int timeout=State.myConfig.getHeartbeatDt();
-	Logger logger=LoggerFactory.getLogger("server");
 	Timer timer;
 	
 	private static FollowerState INSTANCE = null;
@@ -41,7 +41,7 @@ public class FollowerState extends State implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		logger.info("-----------------------FOLLOWER SERVICE STARTED ----------------------------");
+		MessageServer.logger.info("=========== FOLLOWER SERVICE STARTED ===========");
 		timeout=State.myConfig.getHeartbeatDt();
 		initFollower();
 		
@@ -95,22 +95,7 @@ public class FollowerState extends State implements Runnable{
 		 };
 		
 		tThread.start();
-		/*timer = new Timer();
-         
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				System.out.println("Timeout:"+timeout);
-				timeout=timeout-100;
-				if(timeout==0) {
-					System.out.println("Timeout:"+timeout);
-					gash.router.server.state.State.setStatus(gash.router.server.state.State.Status.CANDIDATE);
-
-					
-				}
-			}
-		}, 100);*/
-
+		
 	}
 
 	
@@ -136,9 +121,9 @@ public class FollowerState extends State implements Runnable{
             try {
                 cthread.join();
             } catch (InterruptedException e) {
-                logger.error("Exception", e);
+            	MessageServer.logger.error("Exception", e);
             }
-            logger.error("cthread successfully stopped.");
+            MessageServer.logger.info("cthread successfully stopped.");
         } 
 	}
 	

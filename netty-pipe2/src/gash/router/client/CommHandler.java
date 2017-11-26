@@ -21,12 +21,9 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gash.router.server.state.CandidateState;
-import gash.router.server.state.State;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import routing.MsgInterface.Route;
-import routing.MsgInterface.Route.Path;
 import routing.Pipe.MessageRoute;
 
 /**
@@ -41,17 +38,19 @@ import routing.Pipe.MessageRoute;
 public class CommHandler extends SimpleChannelInboundHandler<Route> {
 	protected static Logger logger = LoggerFactory.getLogger("connect");
 	protected ConcurrentMap<String, CommListener> listeners = new ConcurrentHashMap<String, CommListener>();
-	// private volatile Channel channel;
+	//private volatile Channel channel;
 
 	public CommHandler() {
+		logger.info("In comm handler constructor");
 	}
 
 	/**
-	 * Notification registration. Classes/Applications receiving information will
-	 * register their interest in receiving content.
+	 * Notification registration. Classes/Applications receiving information
+	 * will register their interest in receiving content.
 	 * 
-	 * Note: Notification is serial, FIFO like. If multiple listeners are present,
-	 * the data (message) is passed to the listener as a mutable object.
+	 * Note: Notification is serial, FIFO like. If multiple listeners are
+	 * present, the data (message) is passed to the listener as a mutable
+	 * object.
 	 * 
 	 * @param listener
 	 */
@@ -63,8 +62,9 @@ public class CommHandler extends SimpleChannelInboundHandler<Route> {
 	}
 
 	/**
-	 * a message was received from the server. Here we dispatch the message to the
-	 * client's thread pool to minimize the time it takes to process other messages.
+	 * a message was received from the server. Here we dispatch the message to
+	 * the client's thread pool to minimize the time it takes to process other
+	 * messages.
 	 * 
 	 * @param ctx
 	 *            The channel the message was received from
@@ -73,21 +73,14 @@ public class CommHandler extends SimpleChannelInboundHandler<Route> {
 	 */
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Route msg) throws Exception {
-		if(msg.getPath()== Path.PING) {
-			if (State.getStatus() == State.Status.CANDIDATE) {
-				CandidateState.getInstance().handleVote();
-			}
-		} else {
-			for (String id : listeners.keySet()) {
-				CommListener cl = listeners.get(id);
+		System.out.println("--> got incoming message");
+		for (String id : listeners.keySet()) {
+			CommListener cl = listeners.get(id);
 
-				// TODO this may need to be delegated to a thread pool to allow
-				// async processing of replies
-				cl.onMessage(msg);
-			}
+			// TODO this may need to be delegated to a thread pool to allow
+			// async processing of replies
+			new ListenerWorker(cl,msg).start();
 		}
-	
-
 	}
 
 	@Override

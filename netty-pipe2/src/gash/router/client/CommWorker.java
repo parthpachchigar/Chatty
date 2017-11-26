@@ -24,8 +24,8 @@ public class CommWorker extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("--> starting worker thread");
-		System.out.flush();
+		CommConnection.logger.info("--> starting worker thread");
+		
 
 		Channel ch = conn.connect();
 		if (ch == null || !ch.isOpen() || !ch.isActive()) {
@@ -46,14 +46,14 @@ public class CommWorker extends Thread {
 						conn.outbound.putFirst(msg);
 					}
 
-					System.out.flush();
+					
 				} else {
-					System.out.println("--> channel not writable- tossing out msg!");
+					CommConnection.logger.info("--> channel not writable- tossing out msg!");
 
 					// conn.outbound.putFirst(msg);
 				}
 
-				System.out.flush();
+				
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 				break;

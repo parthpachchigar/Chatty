@@ -19,7 +19,7 @@ import gash.router.client.CommConnection;
 import gash.router.client.CommListener;
 import gash.router.client.MessageClient;
 import routing.MsgInterface.Route;
-import routing.Pipe.MessageRoute;
+
 
 public class DemoApp implements CommListener {
 	private MessageClient mc;
@@ -72,7 +72,7 @@ public class DemoApp implements CommListener {
 	}
 
 	public void onMessage(Route msg) {
-		System.out.println("onMessage: ---> " + msg);
+		System.out.println("---> " + msg);
 	}
 
 	/**
