@@ -188,11 +188,7 @@ public class PostgreSQL implements DatabaseClient {
 		try {
 			stmt = conn.createStatement();
 			StringBuilder sql = new StringBuilder();
-<<<<<<< HEAD
 			sql.append("UPDATE groups set archived=now() WHERE gname='"+groupName+"';");
-=======
-			sql.append("DELETE FROM messages WHERE \"id\" ='"+key+"';");
->>>>>>> 11b62728280c3728f7a5316782a347d85798de3d
 			stmt.executeUpdate(sql.toString());
 
 		} catch (Exception e) {

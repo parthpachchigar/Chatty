@@ -29,14 +29,10 @@ public class MessageApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-<<<<<<< HEAD
 		
 		
 		
 		
-=======
-		String pathname = "resources/route-3.conf";
->>>>>>> 11b62728280c3728f7a5316782a347d85798de3d
 		if (args.length == 0) {
 			System.out.println("usage: server <config file>");
 			System.exit(1);
