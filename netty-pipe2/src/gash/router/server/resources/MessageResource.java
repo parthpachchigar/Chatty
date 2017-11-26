@@ -78,11 +78,16 @@ public class MessageResource implements RouteResource {
 					ei.getComm().write(route.build());
 				}
 			}
+<<<<<<< HEAD
 			
 			logger.info("Sent message for replication"+body.getMessage());
 			
 		}else {
 			State.leaderConnection.write(body);
+=======
+		} else if(State.getStatus() == State.Status.LEADER){
+			State.getState().handleMessageEntries(body);
+>>>>>>> 11b62728280c3728f7a5316782a347d85798de3d
 		}
 		return null;
 	}

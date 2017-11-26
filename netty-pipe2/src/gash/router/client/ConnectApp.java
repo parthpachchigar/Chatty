@@ -53,6 +53,51 @@ public class ConnectApp implements CommListener {
 
 	
 
+<<<<<<< HEAD
+=======
+		Route.Builder route = Route.newBuilder();
+		route.setId(123);
+		route.setPath(Route.Path.MESSAGE);
+		route.setMessage(msg);
+		return route.build();
+	}
+	public void pingMessage(int N, String line) {
+		long[] dt = new long[N];
+		long st = System.currentTimeMillis(), ft = 0;
+		for (int n = 0; n < N; n++) {
+			if(n % 1400 == 0){
+				try {
+					Thread.sleep(2 * 1000);
+				} catch (InterruptedException e) {
+
+				}
+
+			}
+			mc.sendMessage(sendMessage(line + " : " + n ));
+			System.out.println("sent: "+ line + " : " + n);
+			ft = System.currentTimeMillis();
+			dt[n] = ft - st;
+			st = ft;
+		}
+	}
+	public void pingMessageWithUsers(String line) {
+		final int n = 2000;
+		pingMessage(n, line);
+
+		uname = uname + "1";
+		pingMessage(n, line);
+
+		uname = uname + "2";
+		pingMessage(n, line);
+
+		uname = uname + "3";
+		pingMessage(n, line);
+
+		uname = uname + "4";
+		pingMessage(n, line);
+
+	}
+>>>>>>> 11b62728280c3728f7a5316782a347d85798de3d
 	public void continuePing() throws Exception {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		for (;;) {
@@ -98,6 +143,7 @@ public class ConnectApp implements CommListener {
 				route.setUser(u.build());
 				CommConnection.getInstance().write(route.build());
 				break;
+<<<<<<< HEAD
 			case 4:
 				route.setPath(Route.Path.GROUP);
 				Group.Builder g=Group.newBuilder();
@@ -134,6 +180,19 @@ public class ConnectApp implements CommListener {
 				break;
 			default:
 				System.out.println("Invalid Choice");
+=======
+			} else if(uname == null){
+				uname = line;
+				System.out.print("destination_id: ");
+			} else if(destination_id == null){
+				destination_id = line;
+				System.out.print("message: ");
+			} else {
+				mc.sendMessage(sendMessage(line));
+				//pingMessageWithUsers(line);
+				Thread.sleep(1 * 1000);
+				System.out.print("message: ");
+>>>>>>> 11b62728280c3728f7a5316782a347d85798de3d
 			}
 		}
 	}

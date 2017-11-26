@@ -98,7 +98,7 @@ public class FollowerState extends State implements Runnable{
 		
 	}
 
-	
+
 	
 	public void onReceivingHeartBeatPacket() {
 		timeout=State.myConfig.getHeartbeatDt();
